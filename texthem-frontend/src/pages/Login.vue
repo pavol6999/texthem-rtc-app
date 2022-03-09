@@ -18,8 +18,22 @@
 			>
 				<q-card v-bind:style="$q.screen.lt.sm ? { 'width': '80%' } : { 'width': '50%' }">
 					<q-card-section>
-						<q-avatar size="103px" class="absolute-center avatar">
+						<!-- <q-avatar size="103px" class="absolute-center avatar">
 							<img src="~assets/avatar.png" />
+						</q-avatar>-->
+						<q-avatar size="120px" class="absolute-center avatar">
+							<video
+								width="240"
+								height="140"
+								style="background-size: contain"
+								poster="~assets/avatar.png"
+								autoplay
+								loop
+								muted
+							>
+								<source type="video/webm" src="~assets/profile.webm" />
+								<source type="video/mp4" src="~assets/profile.mp4" />
+							</video>
 						</q-avatar>
 					</q-card-section>
 
@@ -43,7 +57,7 @@
 								<q-btn class="full-width" color="primary" type="submit" label="Login" rounded />
 								<div class="text-center q-mt-sm q-gutter-lg">
 									<router-link class="text-grey-6" to="/">Forgot password?</router-link>
-									<router-link class="text-grey-6" to="/">Sign up</router-link>
+									<router-link class="text-grey-6" to="/register">Sign up</router-link>
 								</div>
 							</div>
 						</q-form>
@@ -59,21 +73,23 @@
 import { useQuasar } from 'quasar'
 let $q = useQuasar()
 export default {
-	
+
 	mounted() {
 		$q = useQuasar()
 	},
 
 	data() {
 		return {
-			
-				nickname: '',
-				password: ''
-			
+
+			nickname: '',
+			password: '',
+
 		}
 	},
+
 	name: 'Login',
 	methods: {
+
 		onSubmit() {
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -106,6 +122,15 @@ export default {
 .signin-img-row {
 	height: 70vh;
 }
+
+/* video {
+	left: 50%;
+	min-height: 100%;
+	min-width: 100%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+} */
 .waves {
 	position: absolute;
 	height: 100%;
