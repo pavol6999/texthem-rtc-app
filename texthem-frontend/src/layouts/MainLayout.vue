@@ -1,16 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-header elevated class="bg-primary text-white">
-      <q-toolbar class="navbar-color">
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title class="absolute-center">
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar>TexThem
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-header>
+    <NavbarVue></NavbarVue>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
       <!-- drawer content -->
@@ -37,6 +27,7 @@
 
 <script>
 import { ref } from 'vue'
+import NavbarVue from 'src/components/Navbar.vue'
 
 export default {
   setup() {
@@ -48,6 +39,9 @@ export default {
         leftDrawerOpen.value = !leftDrawerOpen.value
       }
     }
+  },
+  components: {
+    NavbarVue
   }
 }
 </script>

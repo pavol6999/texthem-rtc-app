@@ -74,9 +74,12 @@ interface state {
 	nickname: string;
 	password: string;
 }
+
 import { defineComponent, PropType } from 'vue';
 import { useQuasar } from 'quasar'
 let $q = useQuasar()
+
+
 export default defineComponent({
 
 	mounted() {
