@@ -68,17 +68,22 @@
 	</q-page>
 </template>
 
-<script>
+<script lang="ts">
 
+interface state {
+	nickname: string;
+	password: string;
+}
+import { defineComponent, PropType } from 'vue';
 import { useQuasar } from 'quasar'
 let $q = useQuasar()
-export default {
+export default defineComponent({
 
 	mounted() {
 		$q = useQuasar()
 	},
 
-	data() {
+	data(): state {
 		return {
 
 			nickname: '',
@@ -111,7 +116,7 @@ export default {
 			}
 		}
 	}
-};
+});
 </script>
 
 <style scoped>
