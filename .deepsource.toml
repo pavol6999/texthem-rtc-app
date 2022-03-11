@@ -1,4 +1,4 @@
-version = 1
+version = 2
 
 [[analyzers]]
 name = "javascript"
@@ -6,3 +6,5 @@ enabled = true
 
   [analyzers.meta]
   plugins = ["vue"]
+  module_system = "es-modules"
+  dialect = "typescript"
