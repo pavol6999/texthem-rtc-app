@@ -6,6 +6,7 @@ import {
     useStore as vuexUseStore,
 } from 'vuex';
 import mainStore from './mainStore';
+import { GlobalStateInterface } from './mainStore/state';
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
 
@@ -23,6 +24,7 @@ export interface StateInterface {
     // example: ExampleStateInterface;
     // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
     example: unknown;
+    mainStore: GlobalStateInterface;
 }
 
 // provide typings for `this.$store`
