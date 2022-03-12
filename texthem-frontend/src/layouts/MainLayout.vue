@@ -1,53 +1,42 @@
 <template>
-  <q-layout view="hHh LpR fFf">
-    <NavbarVue></NavbarVue>
+    <q-layout view="hHh lpR fFf">
+        <Navbar></Navbar>
+        <q-drawer v-model="leftDrawerOpen" side="left" overlay elevated>
+            <!-- drawer content -->
+        </q-drawer>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <!-- drawer content -->
-      <q-img
-        class="absolute-top"
-        src="https://cdn.quasar.dev/img/material.png"
-        style="height: 150px"
-      >
-        <div class="absolute-bottom bg-transparent">
-          <q-avatar size="56px" class="q-mb-sm">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-          </q-avatar>
-          <div class="text-weight-bold">Razvan Stoenescu</div>
-          <div>@rstoenescu</div>
-        </div>
-      </q-img>
-    </q-drawer>
+        <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+            <!-- drawer content -->
+        </q-drawer>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+        <q-page-container>
+            <router-view />
+        </q-page-container>
+    </q-layout>
 </template>
 
 <script>
 import { ref } from 'vue'
-import NavbarVue from 'src/components/Navbar.vue'
-
+import Navbar from 'src/components/Navbar.vue'
 export default {
-  setup() {
-    const leftDrawerOpen = ref(false)
+    setup() {
+        const leftDrawerOpen = ref(false)
+        const rightDrawerOpen = ref(false)
 
-    return {
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+        return {
+            leftDrawerOpen,
+            toggleLeftDrawer() {
+                leftDrawerOpen.value = !leftDrawerOpen.value
+            },
+
+            rightDrawerOpen,
+            toggleRightDrawer() {
+                rightDrawerOpen.value = !rightDrawerOpen.value
+            }
+        }
+    },
+    components: {
+        Navbar
     }
-  },
-  components: {
-    NavbarVue
-  }
 }
 </script>
-
-<style scoped>
-.navbar-color {
-  background-color: #443eb7;
-}
-</style>
