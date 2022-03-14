@@ -91,9 +91,18 @@
     </q-page>
 </template>
 
-<script>
+<script lang="ts">
+
+interface regis {
+    nickname: string;
+    password: string;
+    confirmPassword: string;
+    email: string;
+}
+
 
 import { useQuasar } from 'quasar'
+import { defineComponent, PropType } from 'vue';
 
 import useVuelidate from '@vuelidate/core'
 import {
@@ -103,8 +112,10 @@ import {
   helpers
 } from '@vuelidate/validators'
 let $q = useQuasar()
-export default {
 
+
+export default defineComponent({  
+  name: 'Register',
 
   setup () {
 		return {
@@ -116,7 +127,7 @@ export default {
     $q = useQuasar()
   },
 
-  data() {
+  data(): regis {
     return {
       nickname: '',
       password: '',
@@ -125,7 +136,6 @@ export default {
     }
   },
 
-  name: 'Register',
   methods: {
 
     async onSubmit() {
@@ -203,7 +213,7 @@ export default {
 		}
 	}
 
-};
+});
 </script>
 
 <style scoped>

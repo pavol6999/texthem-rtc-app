@@ -110,7 +110,7 @@ export default defineComponent({
 		$q = useQuasar()
 	},
 
-	data(): state {
+	data(): user {
 		return {
 			nickname: '',
 			password: '',
