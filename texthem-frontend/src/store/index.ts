@@ -8,7 +8,9 @@ import {
 import mainStore from './mainStore';
 import { GlobalStateInterface } from './mainStore/state';
 import { UserStateInterface } from './userStore/state';
-import UserModule from './userStore';
+import UserStore from './userStore';
+import createMultiTabState from 'vuex-multi-tab-state';
+import createPersistedState from 'vuex-persistedstate';
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
 
@@ -27,7 +29,7 @@ export interface StateInterface {
     // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
     example: unknown;
     mainStore: GlobalStateInterface;
-    UserModule: UserStateInterface;
+    UserStore: UserStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -46,12 +48,13 @@ export default store(function (/* { ssrContext } */) {
         modules: {
             // example
             mainStore,
-            UserModule,
+            UserStore,
         },
 
         // enable strict mode (adds overhead!)
         // for dev mode and --debug builds only
         strict: !!process.env.DEBUGGING,
+        // plugins: [createPersistedState()],
     });
 
     return Store;

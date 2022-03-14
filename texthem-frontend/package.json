@@ -20,7 +20,9 @@
     "quasar": "^2.0.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "vuex-multi-tab-state": "^1.0.17",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",

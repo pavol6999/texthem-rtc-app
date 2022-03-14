@@ -1,13 +1,8 @@
 <template>
-    <q-layout view="hHh lpR fFf">
+    <q-layout view="lhh LpR fFf">
         <Navbar></Navbar>
-        <q-drawer v-model="leftDrawerOpen" side="left" overlay elevated>
-            <!-- drawer content -->
-        </q-drawer>
-
-        <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
-            <!-- drawer content -->
-        </q-drawer>
+        <ChannelDrawer></ChannelDrawer>
+        <UserDrawer></UserDrawer>
 
         <q-page-container>
             <router-view />
@@ -17,10 +12,16 @@
 
 <script>
 import Navbar from 'src/components/Navbar.vue'
+import ChannelDrawer from 'src/components/ChannelDrawer.vue'
+import UserDrawer from 'src/components/UserDrawer.vue'
+
 export default {
 
     components: {
-        Navbar
+        Navbar,
+        ChannelDrawer,
+        UserDrawer,
+
     },
 
 }

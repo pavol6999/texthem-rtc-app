@@ -5,8 +5,8 @@ const mutation: MutationTree<UserStateInterface> = {
     setJWT(state: UserStateInterface, jwt: string) {
         state.jwt = jwt;
     },
-    setIsLogged(state: UserStateInterface, isLogged: boolean) {
-        state.isLogged = isLogged;
+    changeLoggedStatus(state: UserStateInterface) {
+        state.isLogged = !state.isLogged;
     },
     setUsername(state: UserStateInterface, username: string) {
         state.username = username;

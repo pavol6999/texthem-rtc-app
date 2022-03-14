@@ -4,6 +4,8 @@ export interface GlobalStateInterface {
     mobileNavbarState: boolean;
 }
 
+import { LocalStorage, SessionStorage } from 'quasar';
+
 function state(): GlobalStateInterface {
     return {
         leftDrawerState: true,

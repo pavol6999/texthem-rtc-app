@@ -1,7 +1,7 @@
 <template>
     <q-header elevated class="bg-primary text-white">
         <q-toolbar>
-            <q-btn dense flat v-if="leftSideDrawer" round icon="menu" @click="toggleLeftDrawer" />
+            <q-btn dense flat v-if="isLoggedIn" round icon="menu" @click="toggleLeftDrawer" />
 
             <q-toolbar-title>
                 <div class="absolute-center">
@@ -10,7 +10,7 @@
                     </q-avatar>TextThem
                 </div>
             </q-toolbar-title>
-            <q-btn dense v-if="rightSideDrawer" flat round icon="menu" @click="toggleRightDrawer" />
+            <q-btn dense v-if="isLoggedIn" flat round icon="menu" @click="toggleRightDrawer" />
         </q-toolbar>
     </q-header>
 </template>
@@ -23,29 +23,24 @@ import { mapGetters, mapMutations } from 'vuex'
 
 
 export default defineComponent({
-    // setup() {
-    //     const $store = useStore()
+
     name: "Navbar",
     computed: {
-        // leftDrawerState: {
-        //     get() {
-        //         return this.$store.state.mainStore.leftDrawerState
-        //     },
-        //     set(val) {
-        //         this.$store.commit('mainStore/toggleLeftDrawer', val)
-        //     }
-        // },
         ...mapGetters('mainStore', {
             leftSideDrawer: 'leftSideDrawer',
             rightSideDrawer: 'rightSideDrawer'
         }),
-
-    }
-    ,
+        ...mapGetters('UserStore', {
+            isLoggedIn: 'isLoggedIn'
+        })
+    },
     methods: {
         ...mapMutations('mainStore', {
             toggleLeftDrawer: 'toggleLeftDrawer',
             toggleRightDrawer: 'toggleRightDrawer',
+        }),
+        ...mapMutations('UserStore', {
+            changeLoggedStatus: 'changeLoggedStatus'
         }),
     }
 }
