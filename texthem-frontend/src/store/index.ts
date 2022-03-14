@@ -2,6 +2,7 @@ import { store } from 'quasar/wrappers';
 import { InjectionKey } from 'vue';
 import {
     createStore,
+    Payload,
     Store as VuexStore,
     useStore as vuexUseStore,
 } from 'vuex';
@@ -9,6 +10,7 @@ import mainStore from './mainStore';
 import { GlobalStateInterface } from './mainStore/state';
 import { UserStateInterface } from './userStore/state';
 import UserStore from './userStore';
+import VuexPersistence from 'vuex-persist';
 
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
@@ -42,6 +44,10 @@ declare module '@vue/runtime-core' {
 export const storeKey: InjectionKey<VuexStore<StateInterface>> =
     Symbol('vuex-key');
 
+const vuexLocal = new VuexPersistence<StateInterface>({
+    storage: window.localStorage,
+});
+
 export default store(function (/* { ssrContext } */) {
     const Store = createStore<StateInterface>({
         modules: {
@@ -53,7 +59,7 @@ export default store(function (/* { ssrContext } */) {
         // enable strict mode (adds overhead!)
         // for dev mode and --debug builds only
         strict: !!process.env.DEBUGGING,
-        // plugins: [createPersistedState()],
+        plugins: [vuexLocal.plugin],
     });
 
     return Store;

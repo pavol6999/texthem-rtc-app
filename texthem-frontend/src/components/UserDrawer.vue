@@ -9,15 +9,27 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapGetters, mapMutations } from 'vuex'
 
 export default defineComponent({
 
     name: "UserDrawer",
     computed: {
-        ...mapGetters('mainStore', {
-            rightSideDrawer: 'rightSideDrawer'
-        }),
-    }
+        rightSideDrawer: {
+            get() {
+                return this.$store.state.mainStore.rightDrawerState
+            },
+            set(val: boolean) {
+
+                this.$store.commit('mainStore/toggleRightDrawer', val)
+            },
+        }
+        ,
+
+    },
+    // methods: {
+    //     ...mapMutations('mainStore', {
+    //         toggleRightSideDrawer: 'toggleRightSideDrawer'
+    //     }),
+    // }
 })
 </script>

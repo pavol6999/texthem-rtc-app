@@ -1,7 +1,14 @@
 <template>
     <q-header elevated class="bg-primary text-white">
         <q-toolbar>
-            <q-btn dense flat v-if="isLoggedIn" round icon="menu" @click="toggleLeftDrawer" />
+            <q-btn
+                dense
+                flat
+                v-if="isLoggedIn"
+                round
+                icon="menu"
+                @click="leftSideDrawer = !leftSideDrawer"
+            />
 
             <q-toolbar-title>
                 <div class="absolute-center">
@@ -10,7 +17,14 @@
                     </q-avatar>TextThem
                 </div>
             </q-toolbar-title>
-            <q-btn dense v-if="isLoggedIn" round flat icon="group" @click="toggleRightDrawer" />
+            <q-btn
+                dense
+                v-if="isLoggedIn"
+                round
+                flat
+                icon="group"
+                @click="rightSideDrawer = !rightSideDrawer"
+            />
         </q-toolbar>
     </q-header>
 </template>
@@ -26,19 +40,34 @@ export default defineComponent({
 
     name: "Navbar",
     computed: {
-        ...mapGetters('mainStore', {
-            leftSideDrawer: 'leftSideDrawer',
-            rightSideDrawer: 'rightSideDrawer'
-        }),
+
+        rightSideDrawer: {
+            get() {
+                return this.$store.state.mainStore.rightDrawerState
+            },
+            set(val: boolean) {
+
+                this.$store.commit('mainStore/toggleRightDrawer', val)
+            },
+        },
+        leftSideDrawer: {
+            get() {
+                return this.$store.state.mainStore.leftDrawerState
+            },
+            set(val: boolean) {
+
+                this.$store.commit('mainStore/toggleLeftDrawer', val)
+            },
+        },
         ...mapGetters('UserStore', {
             isLoggedIn: 'isLoggedIn'
         })
     },
     methods: {
-        ...mapMutations('mainStore', {
-            toggleLeftDrawer: 'toggleLeftDrawer',
-            toggleRightDrawer: 'toggleRightDrawer',
-        }),
+        // ...mapMutations('mainStore', {
+        //     toggleLeftDrawer: 'toggleLeftDrawer',
+
+        // }),
         ...mapMutations('UserStore', {
             changeLoggedStatus: 'changeLoggedStatus'
         }),
