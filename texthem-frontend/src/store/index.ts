@@ -7,6 +7,8 @@ import {
 } from 'vuex';
 import mainStore from './mainStore';
 import { GlobalStateInterface } from './mainStore/state';
+import { UserStateInterface } from './userStore/state';
+import UserModule from './userStore';
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
 
@@ -25,6 +27,7 @@ export interface StateInterface {
     // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
     example: unknown;
     mainStore: GlobalStateInterface;
+    UserModule: UserStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -43,6 +46,7 @@ export default store(function (/* { ssrContext } */) {
         modules: {
             // example
             mainStore,
+            UserModule,
         },
 
         // enable strict mode (adds overhead!)

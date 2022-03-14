@@ -2,14 +2,14 @@ import { MutationTree } from 'vuex';
 import { GlobalStateInterface } from './state';
 
 const mutation: MutationTree<GlobalStateInterface> = {
-    toggleLeftDrawer(state: GlobalStateInterface, active: boolean) {
-        state.leftDrawerState = active;
+    toggleLeftDrawer(state: GlobalStateInterface) {
+        state.leftDrawerState = !state.leftDrawerState;
     },
-    toggleRightDrawer(state: GlobalStateInterface, active: boolean) {
-        state.rightDrawerState = active;
+    toggleRightDrawer(state: GlobalStateInterface) {
+        state.rightDrawerState = !state.rightDrawerState;
     },
-    toggleMobileNavbar(state: GlobalStateInterface, active: boolean) {
-        state.mobileNavbarState = active;
+    toggleMobileNavbar(state: GlobalStateInterface) {
+        state.mobileNavbarState = !state.mobileNavbarState;
     },
 };
 
