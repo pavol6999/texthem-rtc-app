@@ -9,8 +9,7 @@ import mainStore from './mainStore';
 import { GlobalStateInterface } from './mainStore/state';
 import { UserStateInterface } from './userStore/state';
 import UserStore from './userStore';
-import createMultiTabState from 'vuex-multi-tab-state';
-import createPersistedState from 'vuex-persistedstate';
+
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
 

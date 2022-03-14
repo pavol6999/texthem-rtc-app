@@ -10,15 +10,7 @@
                     </q-avatar>TextThem
                 </div>
             </q-toolbar-title>
-            <q-btn
-                dense
-                v-if="isLoggedIn"
-                round
-                flat
-                icon="group
-            "
-                @click="toggleRightDrawer"
-            />
+            <q-btn dense v-if="isLoggedIn" round flat icon="group" @click="toggleRightDrawer" />
         </q-toolbar>
     </q-header>
 </template>
