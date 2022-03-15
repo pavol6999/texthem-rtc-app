@@ -2,7 +2,6 @@ import { store } from 'quasar/wrappers';
 import { InjectionKey } from 'vue';
 import {
     createStore,
-    Payload,
     Store as VuexStore,
     useStore as vuexUseStore,
 } from 'vuex';
