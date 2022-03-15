@@ -2,14 +2,47 @@
     <q-drawer v-model="rightSideDrawer" side="right" overlay elevated>
         <button @click="toggle_random">Toggle random</button>
 
+        <q-item-label header>Online</q-item-label>
         <TransitionGroup name="list" tag="ul">
-            <h2 class="mb-3">Online:</h2>
-            <li v-for="item in online_list" :key="item.username">{{ item.username }}</li>
+          <q-item v-for="item in online_list" :key="item.username" class="q-mb-sm" clickable v-ripple>
+                <q-item-section avatar>
+                    <q-avatar color="primary" text-color="white">
+                        {{ item.username.split('')[0] }}
+                    </q-avatar>
+                </q-item-section>
+
+                <q-item-section>
+                    <q-item-label>{{ item.username }}</q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                   <q-badge color="green">
+                        Online
+                    </q-badge>
+                </q-item-section>
+            </q-item>
         </TransitionGroup>
 
+        <q-separator />
+        <q-item-label header>Offline</q-item-label>
         <TransitionGroup name="list" tag="ul">
-            <h2 class="mb-3">Offline:</h2>
-            <li v-for="item in offline_list" :key="item.username">{{ item.username }}</li>
+            <q-item v-for="item in offline_list" :key="item.username" class="q-mb-sm" clickable v-ripple>
+                <q-item-section avatar>
+                    <q-avatar color="primary" text-color="grey">
+                        {{ item.username.split('')[0] }}
+                    </q-avatar>
+                </q-item-section>
+
+                <q-item-section>
+                    <q-item-label class="offline_usrname">{{ item.username }}</q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                   <q-badge color="grey">
+                        Offline
+                    </q-badge>
+                </q-item-section>
+            </q-item>
         </TransitionGroup>
     </q-drawer>
 </template>
@@ -67,13 +100,19 @@ export default defineComponent({
 </script>
 
 <style>
-.list-enter-active,
-.list-leave-active {
-    transition: all 0.5s ease;
-}
-.list-enter-from,
-.list-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
-}
+    .list-enter-active,
+    .list-leave-active {
+        transition: all 0.5s ease;
+    }
+    .list-enter-from,
+    .list-leave-to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    .offline_usrname {
+        opacity: 0.2
+    }
+    .scroll {
+     overflow: hidden;
+    }
 </style>
