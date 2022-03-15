@@ -155,7 +155,6 @@ export default defineComponent({
 
 		const regexcheck = () => {
 			let test = this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{0,}$/)
-			console.log(test)
 			if (test === null)
 				return false;
 			else 
