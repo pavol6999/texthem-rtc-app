@@ -4,7 +4,6 @@
 
 
 
-
 <template>
     <q-page>
         <img src="~assets/layered-waves-haikei.svg" class="waves" />
@@ -87,48 +86,94 @@ interface user {
 
 import { defineComponent, PropType } from 'vue';
 import { useQuasar } from 'quasar'
+import useVuelidate from '@vuelidate/core'
+import {
+  minLength,
+  maxLength,
+  required,
+  helpers
+} from '@vuelidate/validators'
 let $q = useQuasar()
 
 
 export default defineComponent({
+	name: 'Login',
 
-    mounted() {
-        $q = useQuasar()
-    },
+	setup () {
+		return {
+			v$: useVuelidate({ $autoDirty: true })
+		}
+	},
 
-    data(): user {
-        return {
 
-            nickname: '',
-            password: '',
+	mounted() {
+		$q = useQuasar()
+	},
 
-        }
-    },
+	data(): user {
+		return {
+			nickname: '',
+			password: '',
+		}
+	},
 
-    name: 'Login',
-    methods: {
+	methods: {
 
-        onSubmit() {
+		async onSubmit() {
+			const login_correct = await this.v$.$validate()
+			/*
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			if (!this.nickname || !this.password) {
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            if (!this.nickname || !this.password) {
+				$q.notify({
+					group: false,
+					type: 'negative',
+					message: 'Please fill in all fields'
+				})
+			}
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			else if (this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/) === null) {
+				$q.notify({
+					group: false,
+					type: 'negative',
+					message: 'Password must be at least 8 characters and contain at least one number, one uppercase and one lowercase letter'
+				})
+			}
+			*/
+			if (!login_correct) {
+				this.$q.notify({
+					color: 'red-4',
+					textColor: 'white',
+					icon: 'warning',
+					message: this.v$.$errors.map(e => e.$message).join()
+				})
+				return 
+			}
+		}
+	},
+	validations () {
 
-                $q.notify({
-                    group: false,
-                    type: 'negative',
-                    message: 'Please fill in all fields'
-                })
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            else if (this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/) === null) {
-                $q.notify({
-                    group: false,
-                    type: 'negative',
-                    message: 'Password must be at least 8 characters and contain at least one number, one uppercase and one lowercase letter'
-                })
-            }
-        }
-    }
+		const regexcheck = () => {
+			let test = this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{0,}$/)
+			if (test === null)
+				return false;
+			else 
+				return true;
+		}
+
+		return {
+			nickname: {
+				required :helpers.withMessage(' Nickname cannot be empty', required),
+				minLength: helpers.withMessage(() => ` Nickname has to be at least 5 characters long`, minLength(5))
+			},
+			password: {
+				required :helpers.withMessage(' Password cannot be empty ', required),
+				minLength: helpers.withMessage(() => ` Password has to be at least 8 characters long`, minLength(8)),
+				regexcheck: helpers.withMessage(' Password has to be alphanumeric', regexcheck)
+			}
+		}
+	}
+
 });
 </script>
 

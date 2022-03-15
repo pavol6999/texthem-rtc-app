@@ -91,58 +91,128 @@
     </q-page>
 </template>
 
-<script>
+<script lang="ts">
+
+interface regis {
+    nickname: string;
+    password: string;
+    confirmPassword: string;
+    email: string;
+}
+
 
 import { useQuasar } from 'quasar'
+import { defineComponent, PropType } from 'vue';
+
+import useVuelidate from '@vuelidate/core'
+import {
+  minLength,
+  maxLength,
+  required,
+  helpers
+} from '@vuelidate/validators'
 let $q = useQuasar()
-export default {
 
-    mounted() {
-        $q = useQuasar()
-    },
 
-    data() {
-        return {
+export default defineComponent({  
+  name: 'Register',
 
-            nickname: '',
-            password: '',
-            confirmPassword: '',
+  setup () {
+		return {
+			v$: useVuelidate({ $autoDirty: true })
+		}
+	},
 
-        }
-    },
+  mounted() {
+    $q = useQuasar()
+  },
 
-    name: 'Login',
-    methods: {
-
-        onSubmit() {
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            if (!this.nickname || !this.password) {
-
-                $q.notify({
-                    group: false,
-                    type: 'negative',
-                    message: 'Please fill in all fields'
-                })
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            else if (this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/) === null) {
-                $q.notify({
-                    group: false,
-                    type: 'negative',
-                    message: 'Password must be at least 8 characters and contain at least one number, one uppercase and one lowercase letter'
-                })
-            }
-            else if (this.password != this.confirmPassword) {
-                $q.notify({
-                    group: false,
-                    type: 'negative',
-                    message: 'Passwords do not match'
-                })
-            }
-        }
+  data(): regis {
+    return {
+      nickname: '',
+      password: '',
+      confirmPassword: '',
+      email: ''
     }
-};
+  },
+
+  methods: {
+
+    async onSubmit() {
+
+      const register_correct = await this.v$.$validate()
+
+      /*
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (!this.nickname || !this.password) {
+
+        $q.notify({
+          group: false,
+          type: 'negative',
+          message: 'Please fill in all fields'
+        })
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      else if (this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/) === null) {
+        $q.notify({
+          group: false,
+          type: 'negative',
+          message: 'Password must be at least 8 characters and contain at least one number, one uppercase and one lowercase letter'
+        })
+      }
+      */
+
+     if (!register_correct) {
+				this.$q.notify({
+					color: 'red-4',
+					textColor: 'white',
+					icon: 'warning',
+					message: this.v$.$errors.map(e => e.$message).join()
+				})
+				return 
+			}
+    if (this.password != this.confirmPassword) {
+        $q.notify({
+          color: 'red-4',
+					textColor: 'white',
+					icon: 'warning',
+          message: 'Passwords do not match'
+        })
+      }
+    }
+  },
+	validations () {
+
+		const regexcheck = () => {
+			let test = this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{0,}$/)
+			if (test === null)
+				return false;
+			else 
+				return true;
+		}
+
+    const regexcheck_mail = () => {
+      return /^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$/.test(this.email)
+    }
+
+		return {
+			nickname: {
+				required :helpers.withMessage(' Nickname cannot be empty', required),
+				minLength: helpers.withMessage(() => ` Nickname has to be at least 5 characters long`, minLength(5))
+			},
+			password: {
+				required :helpers.withMessage(' Password cannot be empty ', required),
+				minLength: helpers.withMessage(() => ` Password has to be at least 8 characters long`, minLength(8)),
+				regexcheck: helpers.withMessage(' Password has to be alphanumeric', regexcheck)
+			},
+      email: {
+        required: helpers.withMessage(' Email is required', required),
+        regexcheck_mail: helpers.withMessage(' Email is in invalid format', regexcheck_mail)
+      }
+		}
+	}
+
+});
 </script>
 
 <style scoped>
