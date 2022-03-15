@@ -4,7 +4,7 @@
             <q-btn
                 dense
                 flat
-                v-if="isLoggedIn"
+                v-if="isLoggedIn && !disabled"
                 round
                 icon="menu"
                 @click="leftSideDrawer = !leftSideDrawer"
@@ -19,7 +19,7 @@
             </q-toolbar-title>
             <q-btn
                 dense
-                v-if="isLoggedIn"
+                v-if="isLoggedIn && !disabled"
                 round
                 flat
                 icon="group"
@@ -39,6 +39,12 @@ import { mapGetters, mapMutations } from 'vuex'
 export default defineComponent({
 
     name: "Navbar",
+    props: {
+        disabled: {
+            type: Boolean,
+            default: false,
+        }
+    },
     computed: {
 
         rightSideDrawer: {
