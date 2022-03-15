@@ -1,30 +1,22 @@
 <template>
     <q-drawer v-model="rightSideDrawer" side="right" overlay elevated>
-                <button @click="toggle_random"> Toggle random </button>
+        <button @click="toggle_random">Toggle random</button>
 
         <TransitionGroup name="list" tag="ul">
-            <h2 class="mb-3"> Online: </h2>
-        <li v-for="item in online_list" :key="item">
-            {{ item.username }}
-        </li>
+            <h2 class="mb-3">Online:</h2>
+            <li v-for="item in online_list" :key="item.username">{{ item.username }}</li>
         </TransitionGroup>
 
- 
         <TransitionGroup name="list" tag="ul">
-            
-        <h2 class="mb-3"> Offline: </h2>  
-        <li v-for="item in offline_list" :key="item">
-            {{ item.username }}
-        </li>
+            <h2 class="mb-3">Offline:</h2>
+            <li v-for="item in offline_list" :key="item.username">{{ item.username }}</li>
         </TransitionGroup>
-        
     </q-drawer>
 </template>
 
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapGetters, mapMutations } from 'vuex'
 
 interface Member {
     username: string,
@@ -35,43 +27,53 @@ interface Member {
 export default defineComponent({
 
     name: "UserDrawer",
-    data () {
+    data() {
         const members: Member[] = [
-                { username: 'John', online: true },
-                { username: 'Anna', online: false },
-                { username: 'Peter', online: false },
-                { username: 'Suzan', online: true }
-            ]
-        return {members}
+            { username: 'John', online: true },
+            { username: 'Anna', online: false },
+            { username: 'Peter', online: false },
+            { username: 'Suzan', online: true }
+        ]
+        return { members }
     },
     computed: {
-        ...mapGetters('mainStore', {
-            rightSideDrawer: 'rightSideDrawer'
-        }),
+
+        rightSideDrawer: {
+            get() {
+                return this.$store.state.mainStore.rightDrawerState
+            },
+            set(val: boolean) {
+
+                this.$store.commit('mainStore/toggleRightDrawer', val)
+            },
+        }
+        ,
         online_list(): Member[] {
             return this.members.filter(e => e.online === true)
         },
         offline_list(): Member[] {
             return this.members.filter(e => e.online === false)
         }
+
     },
     methods: {
-        toggle_random() :void {
+        toggle_random(): void {
             let idx = Math.floor(Math.random() * this.members.length)
-            this.members[idx].online = !this.members[idx].online            
+            this.members[idx].online = !this.members[idx].online
         }
     }
+
 })
 </script>
 
-<style> 
-    .list-enter-active,
-    .list-leave-active {
+<style>
+.list-enter-active,
+.list-leave-active {
     transition: all 0.5s ease;
-    }
-    .list-enter-from,
-    .list-leave-to {
+}
+.list-enter-from,
+.list-leave-to {
     opacity: 0;
     transform: translateX(30px);
-    }
+}
 </style>
