@@ -1,5 +1,5 @@
 <template>
-    <q-drawer v-model="rightSideDrawer" side="right" overlay elevated>
+    <q-drawer v-model="rightSideDrawer" side="right" elevated>
         <button @click="toggle_random">Toggle random</button>
 
         <TransitionGroup name="list" tag="ul">
