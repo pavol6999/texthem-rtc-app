@@ -51,10 +51,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-interface Member {
-    username: string,
-    online: Boolean
-}
+import { Member } from 'components/models';
 
 
 export default defineComponent({

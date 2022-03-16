@@ -59,10 +59,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-interface Channel {
-    channel_name: string,
-    ch_type: string
-}
+import { Channel } from 'components/models';
 
 export default defineComponent({
 
