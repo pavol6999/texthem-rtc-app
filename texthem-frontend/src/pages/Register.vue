@@ -189,10 +189,7 @@ export default defineComponent({
 
         const regexcheck = () => {
             let test = this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{0,}$/)
-            if (test === null)
-                return false;
-            else
-                return true;
+            return test === null ? false : true;
         }
 
         const regexcheck_mail = () => {
