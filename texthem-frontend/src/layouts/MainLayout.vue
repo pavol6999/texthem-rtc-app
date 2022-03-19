@@ -1,5 +1,5 @@
 <template>
-    <q-layout view="lhh LpR lFr">
+    <q-layout view="lHh LpR lFr">
         <Navbar></Navbar>
         <ChannelDrawer></ChannelDrawer>
         <UserDrawer></UserDrawer>
