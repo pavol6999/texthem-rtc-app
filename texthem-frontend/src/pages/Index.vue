@@ -1,6 +1,6 @@
 <template>
     <q-page class="flex column">
-        <ConversationBox></ConversationBox>
+        <ConversationBox :channel_n="channel"> </ConversationBox>
     </q-page>
 </template>
 
@@ -11,8 +11,10 @@ import ConversationBox from 'components/ConversationBox.vue';
 export default defineComponent({
     name: 'PageIndex',
     components: { ConversationBox },
-    data() {
-
-    },
+    props: {
+       channel: {
+           type: String
+       } 
+    }
 });
 </script>

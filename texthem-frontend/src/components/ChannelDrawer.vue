@@ -6,7 +6,7 @@
             expand-separator
             label="Public channels"
         >
-            <q-item v-for="item in public_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple>
+            <q-item v-for="item in public_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
                 <q-item-section avatar>
                     <q-avatar color="primary">
                         {{ item.channel_name.split('')[0] }}
@@ -23,7 +23,7 @@
             expand-separator
             label="Private channels"
         >
-            <q-item v-for="item in private_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple>
+            <q-item v-for="item in private_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
                 <q-item-section avatar>
                     <q-avatar color="primary">
                         {{ item.channel_name.split('')[0] }}
@@ -40,8 +40,8 @@
             expand-separator
             label="Invitations"
         >
-            <q-item v-for="item in invitation_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple>
-                <q-item-section avatar>
+            <q-item v-for="item in invitation_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
+                <q-item-section avatar>                    
                     <q-avatar color="primary">
                         {{ item.channel_name.split('')[0] }}
                     </q-avatar>
@@ -95,6 +95,11 @@ export default defineComponent({
         },
         invitation_list(): Channel[] {
             return this.channels.filter(e => e.ch_type ==="invitation")
+        }
+    },
+    methods: {
+        switch_channel(dest) {
+            this.$router.push("/" + dest)
         }
     }
 })

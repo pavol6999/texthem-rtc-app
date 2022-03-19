@@ -1,5 +1,8 @@
 <template>
     <q-infinite-scroll @load="onLoad" reverse>
+
+        <p> Curr channel: {{ channel_n }} </p>
+        
         <template v-slot:loading>
             <div class="row justify-center q-my-md">
                 <q-spinner color="primary" name="dots" size="40px" />
@@ -68,6 +71,11 @@ export default defineComponent({
                     done()
                 }, 2000)
             }
+        }
+    },
+    props: {
+        channel_n: {
+            type: String
         }
     }
 
