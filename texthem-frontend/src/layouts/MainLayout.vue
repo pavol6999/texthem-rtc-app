@@ -25,7 +25,7 @@ export default {
         ChannelDrawer,
         UserDrawer,
         MessageSendBox,
-    },
+    }
 
 }
 </script>

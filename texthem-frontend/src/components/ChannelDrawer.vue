@@ -1,10 +1,10 @@
 <template>
     <q-drawer v-model="leftSideDrawer" side="left" bordered>
 
-
         <q-expansion-item v-if="public_list.length !== 0"
-            expand-separator
             label="Public channels"
+            icon="public"
+            class="q-mb-sm"
         >
             <q-item v-for="item in public_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
                 <q-item-section avatar>
@@ -19,9 +19,12 @@
             </q-item>
         </q-expansion-item>
 
+        <q-separator/>
+
         <q-expansion-item v-if="private_list.length !== 0"
-            expand-separator
             label="Private channels"
+            icon="unlocked"
+            class="q-mb-sm"
         >
             <q-item v-for="item in private_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
                 <q-item-section avatar>
@@ -36,9 +39,11 @@
             </q-item>
         </q-expansion-item>
 
+        <q-separator/> 
+
         <q-expansion-item v-if="invitation_list.length !== 0"
-            expand-separator
             label="Invitations"
+            icon="mail"
         >
             <q-item v-for="item in invitation_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
                 <q-item-section avatar>                    
@@ -66,10 +71,10 @@ export default defineComponent({
     name: "ChannelDrawer",
     data() {
         const channels: Channel[] = [
-            {channel_name: "public1", ch_type:"public"},
-            {channel_name: "private1", ch_type:"private"},
-            {channel_name: "public2", ch_type:"public"},
-            {channel_name: "inv1", ch_type:"invitation"}
+            {channel_name: "Public1", ch_type:"public"},
+            {channel_name: "Private1", ch_type:"private"},
+            {channel_name: "Public2", ch_type:"public"},
+            {channel_name: "Inv1", ch_type:"invitation"}
         ]
         return {
             channels,
