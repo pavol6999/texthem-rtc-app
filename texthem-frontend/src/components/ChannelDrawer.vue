@@ -1,22 +1,29 @@
 <template>
     <q-drawer v-model="leftSideDrawer" side="left" bordered>
 
+        <p> Channel: {{ curr_channel }} </p>
+
         <q-expansion-item v-if="public_list.length !== 0"
             label="Public channels"
             icon="public"
             class="q-mb-sm"
         >
-            <q-item v-for="item in public_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
-                <q-item-section avatar>
-                    <q-avatar color="primary">
-                        {{ item.channel_name.split('')[0] }}
-                    </q-avatar>
-                </q-item-section>
+            <q-container v-for="item in public_list" :key="item.channel_name">
+                
+                <q-item clickable v-ripple @click="() => switch_channel(item.channel_name)">
 
-                <q-item-section>
-                    <q-item-label>{{ item.channel_name }}</q-item-label>
-                </q-item-section>
-            </q-item>
+                    <q-item-section avatar>
+                        <q-avatar color="primary">
+                            {{ item.channel_name.split('')[0] }}
+                        </q-avatar>
+                    </q-item-section>
+
+                    <q-item-section>
+                        <q-item-label>{{ item.channel_name }}</q-item-label>
+                    </q-item-section>
+                </q-item>
+
+            </q-container>
         </q-expansion-item>
 
         <q-separator/>
@@ -100,6 +107,9 @@ export default defineComponent({
         },
         invitation_list(): Channel[] {
             return this.channels.filter(e => e.ch_type ==="invitation")
+        },        
+        curr_channel(): string {
+            return this.$router.currentRoute._value.params.channel
         }
     },
     methods: {
