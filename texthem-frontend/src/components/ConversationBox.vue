@@ -1,8 +1,5 @@
 <template>
     <q-infinite-scroll @load="onLoad" reverse>
-
-        <p> Curr channel: {{ channel_n }} </p>
-        
         <template v-slot:loading>
             <div class="row justify-center q-my-md">
                 <q-spinner color="primary" name="dots" size="40px" />
@@ -54,6 +51,14 @@
             </q-chat-message>
         </div>
     </q-infinite-scroll>
+
+    <q-page-sticky expand position="top">
+        <q-toolbar class="bg-white text-blue">
+            <q-toolbar-title>
+                Channel: {{ channel_n }}
+            </q-toolbar-title>
+        </q-toolbar>
+    </q-page-sticky>
 </template>
 
 <script lang="ts">
