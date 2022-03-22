@@ -1,29 +1,30 @@
 <template>
     <q-drawer v-model="leftSideDrawer" side="left" bordered>
 
-        <p> Channel: {{ curr_channel }} </p>
-
         <q-expansion-item v-if="public_list.length !== 0"
             label="Public channels"
             icon="public"
             class="q-mb-sm"
         >
-            <q-container v-for="item in public_list" :key="item.channel_name">
-                
-                <q-item clickable v-ripple @click="() => switch_channel(item.channel_name)">
+            <q-item v-for="item in public_list"  
+                :active="link === item.channel_name"
+                :key="item.channel_name"
+                clickable 
+                v-ripple
+                @click="() => switch_channel(item.channel_name)" 
+                active-class="sel_item">
 
-                    <q-item-section avatar>
-                        <q-avatar color="primary">
-                            {{ item.channel_name.split('')[0] }}
-                        </q-avatar>
-                    </q-item-section>
+                <q-item-section avatar>
+                    <q-avatar color="primary">
+                        {{ item.channel_name.split('')[0] }}
+                    </q-avatar>
+                </q-item-section>
 
-                    <q-item-section>
-                        <q-item-label>{{ item.channel_name }}</q-item-label>
-                    </q-item-section>
-                </q-item>
+                <q-item-section>
+                    <q-item-label>{{ item.channel_name }}</q-item-label>
+                </q-item-section>
+            </q-item>
 
-            </q-container>
         </q-expansion-item>
 
         <q-separator/>
@@ -33,7 +34,14 @@
             icon="unlocked"
             class="q-mb-sm"
         >
-            <q-item v-for="item in private_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
+            <q-item v-for="item in private_list" 
+                :active="link === item.channel_name"
+                :key="item.channel_name"
+                clickable 
+                v-ripple
+                @click="() => switch_channel(item.channel_name)" 
+                active-class="sel_item">
+
                 <q-item-section avatar>
                     <q-avatar color="primary">
                         {{ item.channel_name.split('')[0] }}
@@ -52,7 +60,14 @@
             label="Invitations"
             icon="mail"
         >
-            <q-item v-for="item in invitation_list" :key="item.channel_name" class="q-mb-sm" clickable v-ripple @click="() => switch_channel(item.channel_name)">
+            <q-item v-for="item in invitation_list" 
+                :active="link === item.channel_name"
+                :key="item.channel_name"
+                clickable 
+                v-ripple
+                @click="() => switch_channel(item.channel_name)" 
+                active-class="sel_item">
+                
                 <q-item-section avatar>                    
                     <q-avatar color="primary">
                         {{ item.channel_name.split('')[0] }}
@@ -69,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 import { Channel } from 'components/models';
 
@@ -85,7 +100,8 @@ export default defineComponent({
         ]
         return {
             channels,
-            collapse_open: false
+            collapse_open: false,
+            link: ref(this.$router.currentRoute._value.params.channel)
         }
     },
     computed: {
@@ -107,15 +123,21 @@ export default defineComponent({
         },
         invitation_list(): Channel[] {
             return this.channels.filter(e => e.ch_type ==="invitation")
-        },        
-        curr_channel(): string {
-            return this.$router.currentRoute._value.params.channel
         }
     },
     methods: {
         switch_channel(dest) {
+            this.link = dest
             this.$router.push("/" + dest)
-        }
+        },
+         
     }
-})
+});
 </script>
+
+<style>
+    .sel_item {
+        color: white;
+        background: #9c27b0
+    }
+</style>
