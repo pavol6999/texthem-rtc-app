@@ -63,8 +63,6 @@
             <q-item v-for="item in invitation_list" 
                 :active="link === item.channel_name"
                 :key="item.channel_name"
-                clickable 
-                v-ripple
                 @click="() => switch_channel(item.channel_name)" 
                 active-class="sel_item">
                 
@@ -77,8 +75,21 @@
                 <q-item-section>
                     <q-item-label>{{ item.channel_name }}</q-item-label>
                 </q-item-section>
+
+                <q-btn round size="sm" class="inv_btn" color="green" icon="check" />
+                <q-btn round size="sm" class="inv_btn" color="red" icon="close" />
             </q-item>
         </q-expansion-item>
+        
+        <q-btn 
+            dense
+            icon="add"
+            flat
+            color="blue"
+            class="q-ml-lg q-mt-sm"
+        > 
+            Create a new channel
+        </q-btn>
 
     </q-drawer>
 </template>
@@ -101,7 +112,7 @@ export default defineComponent({
         return {
             channels,
             collapse_open: false,
-            link: ref(this.$router.currentRoute._value.params.channel)
+            link: ref(this.$router.currentRoute.value.params.channel)
         }
     },
     computed: {
@@ -126,7 +137,7 @@ export default defineComponent({
         }
     },
     methods: {
-        switch_channel(dest) {
+        switch_channel(dest: string) {
             this.link = dest
             this.$router.push("/" + dest)
         },
@@ -139,5 +150,10 @@ export default defineComponent({
     .sel_item {
         color: white;
         background: #9c27b0
+    }
+
+    .inv_btn {
+        margin: 4px;
+
     }
 </style>
