@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Todo, Meta } from './models';
+import { Todo, Meta } from './interface/models';
 
 export default defineComponent({
     name: 'OptionsComponent',
