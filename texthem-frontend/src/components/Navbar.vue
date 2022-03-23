@@ -8,7 +8,9 @@
                 round
                 icon="menu"
                 @click="leftSideDrawer = !leftSideDrawer"
-            />
+            >
+                <q-label v-if="$q.screen.gt.xs" style="margin-left: 10px; margin-top:2px">Channels</q-label>
+            </q-btn>
 
             <q-toolbar-title>
                 <div class="absolute-center">
@@ -17,28 +19,32 @@
                     </q-avatar>TextThem
                 </div>
             </q-toolbar-title>
+            <!-- <UserProfile></UserProfile> -->
             <q-btn
-                dense
                 v-if="isLoggedIn && !disabled"
-                round
+                rounded
                 flat
-                icon="group"
+                icon-right="group"
                 @click="rightSideDrawer = !rightSideDrawer"
-            />
+            >
+                <q-label v-if="$q.screen.gt.xs" style="margin-right: 10px; margin-top:2px">Users</q-label>
+            </q-btn>
         </q-toolbar>
     </q-header>
 </template>
 
 
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapGetters, mapMutations } from 'vuex'
-
+import UserProfile from './UserProfile.vue'
 
 
 export default defineComponent({
 
     name: "Navbar",
+    components: { UserProfile },
     props: {
         disabled: {
             type: Boolean,

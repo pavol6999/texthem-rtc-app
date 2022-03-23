@@ -52,15 +52,20 @@
         </div>
     </q-infinite-scroll>
 
-    <q-page-sticky expand position="top">
-        <q-toolbar class="bg-white text-blue">
-            <q-toolbar-title>
-                Channel: {{ channel_n }}
+    <q-page-sticky expand position="top" class="current-channel">
+        <q-toolbar class="bg-white text-black">
+            <q-toolbar-title class="text-center">
+                Active Channel -
+                <span class="text-weight-bold text-primary">{{ channel_n }}</span>
             </q-toolbar-title>
         </q-toolbar>
     </q-page-sticky>
 </template>
-
+<style scoped>
+.current-channel {
+    opacity: 0.8;
+}
+</style>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 
