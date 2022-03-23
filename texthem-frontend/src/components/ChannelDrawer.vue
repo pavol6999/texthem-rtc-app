@@ -59,19 +59,36 @@
                 v-for="item in invitation_list"
                 :active="link === item.channel_name"
                 :key="item.channel_name"
-                v-ripple
-                @click="() => switch_channel(item.channel_name)"
-                active-class="sel_item"
-            >
-                <q-item-section avatar>
-                    <q-avatar color="primary">{{ item.channel_name.split('')[0] }}</q-avatar>
+                @click="() => switch_channel(item.channel_name)" 
+                active-class="sel_item">
+                
+                <q-item-section avatar>                    
+                    <q-avatar color="primary">
+                        {{ item.channel_name.split('')[0] }}
+                    </q-avatar>
                 </q-item-section>
 
                 <q-item-section>
                     <q-item-label>{{ item.channel_name }}</q-item-label>
                 </q-item-section>
+
+                <q-btn round size="sm" class="inv_btn" color="green" icon="check" />
+                <q-btn round size="sm" class="inv_btn" color="red" icon="close" />
             </q-item>
         </q-expansion-item>
+
+        
+        <q-btn 
+            dense
+            icon="add"
+            flat
+            color="blue"
+            class="q-ml-lg q-mt-sm"
+        > 
+            Create a new channel
+        </q-btn>
+
+
     </q-drawer>
 </template>
 
@@ -128,8 +145,15 @@ export default defineComponent({
 </script>
 
 <style>
-.sel_item {
-    color: white;
-    background: #9c27b0;
-}
+
+    .sel_item {
+        color: white;
+        background: #9c27b0
+    }
+
+    .inv_btn {
+        margin: 4px;
+
+    }
+
 </style>
