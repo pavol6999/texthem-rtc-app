@@ -1,19 +1,24 @@
 export interface Todo {
-  id: number;
-  content: string;
+    id: number;
+    content: string;
 }
 
 export interface Meta {
-  totalCount: number;
+    totalCount: number;
 }
 
 export interface Member {
-  username: string,
-  online: Boolean
+    username: string;
+    online: boolean;
 }
 
-
 export interface Channel {
-  channel_name: string,
-  ch_type: string
+    channel_name: string;
+    ch_type: string;
+    // owner: Member;
+    // members: Member[];
+}
+
+export interface Invitation {
+    //TODO
 }

@@ -1,11 +1,21 @@
 <template>
     <div class="q-pa-md">
-        <q-btn-dropdown color="purple" rounded label="Profile">
-            <div class="row no-wrap q-pa-md">
+        <q-btn round class="without-icon" unelevated>
+            <q-avatar :size="size">
+                <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
+            </q-avatar>
+            <q-menu class="row q-pa-md">
                 <div class="column">
                     <div class="text-h6 q-mb-md">Settings</div>
-                    <q-toggle v-model="mobileData" label="Use Mobile Data" />
-                    <q-toggle v-model="bluetooth" label="Bluetooth" />
+                    <q-toggle
+                        :model-value="notifications"
+                        checked-icon="check"
+                        color="red"
+                        @click="notifications = !notifications"
+                        unchecked-icon="clear"
+                        label="Notifications"
+                    />
+                    <q-toggle v-model="away" label="Away" />
                 </div>
 
                 <q-separator vertical inset class="q-mx-lg" />
@@ -19,21 +29,42 @@
 
                     <q-btn color="primary" label="Logout" push size="sm" v-close-popup />
                 </div>
-            </div>
-        </q-btn-dropdown>
+            </q-menu>
+        </q-btn>
     </div>
 </template>
+
+<style scoped>
+.without-icon i {
+    display: none;
+}
+</style>
 
 <script lang="ts">
 
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
+    props: {
+        size: { type: String, default: '48px' }
+    },
     setup() {
         return {
-            mobileData: ref(false),
-            bluetooth: ref(false)
+
+            away: ref(false)
+        }
+    },
+
+    computed: {
+        notifications: {
+            get() {
+                return this.$store.state.UserStore.notifications
+            },
+            set(val: boolean) {
+                this.$store.commit('UserStore/setNotifications', val)
+            }
         }
     }
-})
+}
+)
 </script>

@@ -11,6 +11,9 @@ const mutation: MutationTree<UserStateInterface> = {
     setUsername(state: UserStateInterface, username: string) {
         state.username = username;
     },
+    setNotifications(state: UserStateInterface, notifications: boolean) {
+        state.notifications = notifications;
+    },
 };
 
 export default mutation;
