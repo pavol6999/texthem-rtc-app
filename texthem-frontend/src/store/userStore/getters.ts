@@ -12,6 +12,9 @@ const getters: GetterTree<UserStateInterface, StateInterface> = {
     getUsername(state: UserStateInterface) {
         return state.username;
     },
+    getNotifications(state: UserStateInterface) {
+        return state.notifications;
+    },
 };
 
 export default getters;

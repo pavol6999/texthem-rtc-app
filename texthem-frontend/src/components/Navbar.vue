@@ -2,10 +2,9 @@
     <q-header elevated class="bg-primary text-white">
         <q-toolbar>
             <q-btn
-                dense
                 flat
                 v-if="isLoggedIn && !disabled"
-                round
+                rounded
                 icon="menu"
                 @click="leftSideDrawer = !leftSideDrawer"
             >
@@ -19,7 +18,7 @@
                     </q-avatar>TextThem
                 </div>
             </q-toolbar-title>
-            <!-- <UserProfile></UserProfile> -->
+
             <q-btn
                 v-if="isLoggedIn && !disabled"
                 rounded
@@ -44,7 +43,7 @@ import UserProfile from './UserProfile.vue'
 export default defineComponent({
 
     name: "Navbar",
-    components: { UserProfile },
+
     props: {
         disabled: {
             type: Boolean,

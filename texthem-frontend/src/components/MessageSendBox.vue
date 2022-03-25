@@ -13,9 +13,7 @@
             v-bind:style="$q.screen.lt.md ? { 'width': '100%' } : { 'width': '50%' }"
         >
             <template v-slot:before>
-                <q-avatar size="3.5rem">
-                    <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
-                </q-avatar>
+                <UserProfile size="3.5rem"></UserProfile>
             </template>
 
             <template v-slot:append>
@@ -32,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-
+import UserProfile from './UserProfile.vue'
 export default defineComponent({
     name: "MessageSendBox",
     setup() {
@@ -40,6 +38,9 @@ export default defineComponent({
             text: ref(''),
 
         }
+    },
+    components: {
+        UserProfile
     }
 })
 </script>

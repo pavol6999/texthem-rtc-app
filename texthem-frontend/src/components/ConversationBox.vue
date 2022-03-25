@@ -14,6 +14,7 @@
                     :text="['hey, how are you?']"
                     stamp="7 minutes ago"
                     sent
+                    text-color="white"
                     bg-color="primary"
                 />
                 <q-chat-message
@@ -53,29 +54,46 @@
             </div>
         </q-infinite-scroll>
 
-
-
-
-    <q-page-sticky expand position="top" class="current-channel">
-        <q-toolbar class="bg-white text-black">
-            <q-toolbar-title class="text-center">
-                Active Channel -
-                <span class="text-weight-bold text-primary">{{ channel_n }}</span>
-            </q-toolbar-title>
-        </q-toolbar>
-    </q-page-sticky>
-
-                 <q-btn
+        <q-page-sticky expand position="top" class="current-channel">
+            <q-toolbar class="bg-white text-black">
+                <q-btn
                     dense
                     flat
-                    @click=""
+                    rounded
                     icon="delete"
                     color="red"
-                > Delete Channel </q-btn>
+                    class="invisible"
+                >Delete Channel></q-btn>
+                <q-toolbar-title class="text-center">
+                    Active Channel -
+                    <span class="text-weight-bold text-primary">{{ channel_n }}</span>
+                </q-toolbar-title>
+
+                <q-btn
+                    dense
+                    flat
+                    rounded
+                    icon="delete"
+                    @click="confirm = true"
+                    color="red"
+                >Delete Channel</q-btn>
             </q-toolbar>
         </q-page-sticky>
     </div>
 
+    <q-dialog v-model="confirm" persistent>
+        <q-card>
+            <q-card-section class="row items-center">
+                <q-avatar icon="folder_delete" color="primary" text-color="white" />
+                <span class="q-ml-sm">Do you really wish to delete this channel?</span>
+            </q-card-section>
+
+            <q-card-actions align="right">
+                <q-btn flat label="Cancel" color="primary" v-close-popup />
+                <q-btn flat label="Delete Channel" color="red" v-close-popup />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 </template>
 <style scoped>
 .current-channel {
@@ -91,6 +109,7 @@ export default defineComponent({
 
         return {
             items,
+            confirm: ref(false),
             onLoad(index: any, done: any) {
                 setTimeout(() => {
                     items.value.splice(0, 0, {}, {}, {}, {}, {}, {}, {})
