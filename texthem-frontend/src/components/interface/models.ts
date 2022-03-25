@@ -9,7 +9,7 @@ export interface Meta {
 
 export interface Member {
     username: string;
-    online: Boolean;
+    online: boolean;
 }
 
 export interface Channel {
