@@ -8,6 +8,34 @@
             </template>
 
             <div class="column col justify-end q-pa-md">
+                <div v-for="msg in messages" :key="msg.id">
+                    <div class="msg_group_right" v-if="msg.sender_is_user"> 
+                        <q-chat-message 
+                            :name="msg.sender_name"
+                            :text="[msg.msg_text]"
+                            :stamp="msg.msg_age"
+                            sent
+                            text-color="white"
+                            bg-color="primary"
+                        />
+
+                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ msg.sender_name.split('')[0] }}</q-avatar>
+                    </div>
+
+                    <div class="msg_group_left" v-else>
+                        <q-avatar class="q-mr-md" color="accent" text-color="white">{{ msg.sender_name.split('')[0] }}</q-avatar>
+
+                        <q-chat-message 
+                            :name="msg.sender_name"
+                            :text="[msg.msg_text]"
+                            :stamp="msg.msg_age"
+                            text-color="white"
+                            bg-color="accent"
+                        />
+                    </div>
+                </div>
+
+                <!--
                 <q-chat-message
                     name="me"
                     avatar="https://cdn.quasar.dev/img/avatar5.jpg"
@@ -51,6 +79,8 @@
                 >
                     <q-spinner-dots size="2rem" />
                 </q-chat-message>
+                -->
+                
             </div>
         </q-infinite-scroll>
 
@@ -103,6 +133,8 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 
+import { Message } from './interface/models';
+
 export default defineComponent({
     setup() {
         const items = ref([{}, {}, {}, {}, {}, {}, {}])
@@ -122,7 +154,33 @@ export default defineComponent({
         channel_n: {
             type: String
         }
+    },
+    data() {
+        const messages: Message[] = [
+            {id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'Hey, how are you?'},
+            {id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'doin fine, hbu?'},
+            {id: 3, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'I just feel like typing a really, really, REALLY long message to annoy you...'},
+            {id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'Did it work?'}
+        ]
+
+        return {
+            messages
+        }
     }
 
 })
 </script>
+
+<style>
+    .msg_group_left {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-end
+    }
+
+    .msg_group_right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end
+    }
+</style>

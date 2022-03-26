@@ -20,5 +20,13 @@ export interface Channel {
 }
 
 export interface Invitation {
-    //TODO
+    channel_name: string
+}
+
+export interface Message {
+    id: number;
+    sender_name: string;
+    sender_is_user: boolean
+    msg_text: string;
+    msg_age: string
 }
