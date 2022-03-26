@@ -8,7 +8,7 @@
             </template>
 
             <div class="column col justify-end q-pa-md">
-                <div v-for="msg in messages" :key="msg.id">
+                <div v-for="msg in curr_messages()" :key="msg.id">
                     <div class="msg_group_right" v-if="msg.sender_is_user"> 
                         <q-chat-message 
                             :name="msg.sender_name"
@@ -34,52 +34,6 @@
                         />
                     </div>
                 </div>
-
-                <!--
-                <q-chat-message
-                    name="me"
-                    avatar="https://cdn.quasar.dev/img/avatar5.jpg"
-                    :text="['hey, how are you?']"
-                    stamp="7 minutes ago"
-                    sent
-                    text-color="white"
-                    bg-color="primary"
-                />
-                <q-chat-message
-                    name="Jane"
-                    avatar="https://cdn.quasar.dev/img/avatar3.jpg"
-                    :text="[
-                    'doing fine, how r you?']"
-                    stamp="4 minutes ago"
-                    text-color="white"
-                    bg-color="accent"
-                />
-                <q-chat-message
-                    name="Jane"
-                    avatar="https://cdn.quasar.dev/img/avatar3.jpg"
-                    :text="[
-                        'I just feel like typing a really, really, REALLY long message to annoy you...'
-                    ]"
-                    stamp="4 minutes ago"
-                    text-color="white"
-                    bg-color="accent"
-                />
-                <q-chat-message
-                    name="Jane"
-                    avatar="https://cdn.quasar.dev/img/avatar3.jpg"
-                    :text="['Did it work?']"
-                    stamp="1 minutes ago"
-                    text-color="white"
-                    bg-color="accent"
-                />
-                <q-chat-message
-                    bg-color="accent"
-                    name="Jane"
-                    avatar="https://cdn.quasar.dev/img/avatar3.jpg"
-                >
-                    <q-spinner-dots size="2rem" />
-                </q-chat-message>
-                -->
                 
             </div>
         </q-infinite-scroll>
@@ -155,16 +109,51 @@ export default defineComponent({
             type: String
         }
     },
+    methods: {
+        curr_messages(): Message[] {
+            let curr_msgs: Message[] = []
+            switch (this.channel_n) {
+                case('Public1'):
+                    curr_msgs = this.messages1
+                    break;
+                case('Public2'):
+                    curr_msgs = this.messages2
+                    break;
+                case ('Private1'):
+                    curr_msgs = this.messages3
+                    break;
+                default: 
+                    break;
+            }
+            return curr_msgs
+        }
+    },
     data() {
-        const messages: Message[] = [
+        const messages1: Message[] = [
             {id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'Hey, how are you?'},
             {id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'doin fine, hbu?'},
             {id: 3, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'I just feel like typing a really, really, REALLY long message to annoy you...'},
             {id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'Did it work?'}
         ]
 
+        const messages2: Message[] = [
+            {id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg2 ja'},
+            {id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'mgs 2 doin fine, hbu?'},
+            {id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'mgs 2 I just feel like typing a really, really, REALLY long message to annoy you...'},
+            {id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'msg2 Did it work?'}
+        ]
+
+        const messages3: Message[] = [
+            {id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg 3 Hey, how are you?'},
+            {id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'msg3 doin fine, hbu?'},
+            {id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'msg3 I just feel like typing a really, really, REALLY long message to annoy you...'},
+            {id: 4, sender_name: "me", sender_is_user: true, msg_age: '1 minute ago', msg_text: 'msg3 Did it work?'}
+        ]
+
         return {
-            messages
+            messages1,
+            messages2,
+            messages3
         }
     }
 
