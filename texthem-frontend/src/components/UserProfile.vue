@@ -2,7 +2,7 @@
     <div class="q-pa-md">
         <q-btn round class="without-icon" unelevated>
             <q-avatar :size="size">
-                <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
             <q-menu class="row q-pa-md">
                 <div class="column">

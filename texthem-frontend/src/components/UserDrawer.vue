@@ -9,6 +9,7 @@
                 :key="item.username"
                 class="q-mb-sm"
                 clickable
+                @click="() => show_user(item)"
                 v-ripple
             >
                 <q-item-section avatar>
@@ -33,6 +34,7 @@
                 :key="item.username"
                 class="q-mb-sm"
                 clickable
+                @click="() => show_user(item)"
                 v-ripple
             >
                 <q-item-section avatar>
@@ -49,17 +51,33 @@
             </q-item>
         </TransitionGroup>
     </q-drawer>
+    <q-dialog v-model="user_dialog" transition-show="rotate" transition-hide="rotate">
+        <q-card>
+            <q-card-section class="row items-center justify-center">
+                <q-avatar color="primary" text-color="grey">{{ clicked_user.username.split('')[0] }}</q-avatar>
+                <span class="q-ml-sm">{{ clicked_user.username }}</span>
+            </q-card-section>
+            <q-card-section>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.</q-card-section>
+            <q-card-actions align="right">
+                <q-btn flat label="Exit" color="primary" v-close-popup />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 </template>
 
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 import { Member } from 'src/components/interface/models';
 
 
 export default defineComponent({
-
+    setup() {
+        const user_dialog = ref(false)
+        const clicked_user = ref<Member>({ username: '', online: true })
+        return { user_dialog, clicked_user }
+    },
     name: "UserDrawer",
     data() {
         const members: Member[] = [
@@ -94,6 +112,11 @@ export default defineComponent({
         toggle_random(): void {
             let idx = Math.floor(Math.random() * this.members.length)
             this.members[idx].online = !this.members[idx].online
+        },
+        show_user(member: Member): void {
+            this.clicked_user = member
+            this.user_dialog = true
+
         }
     }
 
