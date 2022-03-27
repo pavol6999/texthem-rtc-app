@@ -29,4 +29,5 @@ Prototype of a progressive RTC web application
     * **Offline** - user does not receive messages and notifications. After setting the status to **online** mode, all channels are updated with the newest messages.
 8. If a user is writing a message to a channel, another user can see the typed message as the first user is typing the message. This is done by clicking on the user nickname, who is currently writing a message.
 
-
+# Database draft
+![DB](vpwa.png)
