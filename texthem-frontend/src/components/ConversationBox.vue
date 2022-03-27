@@ -9,8 +9,8 @@
 
             <div class="column col justify-end q-pa-md">
                 <div v-for="msg in curr_messages()" :key="msg.id">
-                    <div class="msg_group_right" v-if="msg.sender_is_user"> 
-                        <q-chat-message 
+                    <div class="msg_group_right" v-if="msg.sender_is_user">
+                        <q-chat-message
                             :name="msg.sender_name"
                             :text="[msg.msg_text]"
                             :stamp="msg.msg_age"
@@ -19,48 +19,46 @@
                             bg-color="primary"
                         />
 
-                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ msg.sender_name.split('')[0] }}</q-avatar>
+                        <q-avatar
+                            class="q-ml-md"
+                            color="primary"
+                            text-color="white"
+                        >{{ msg.sender_name.split('')[0] }}</q-avatar>
                     </div>
 
                     <div class="msg_group_left" v-else>
-                        <q-avatar class="q-mr-md" color="accent" text-color="white">{{ msg.sender_name.split('')[0] }}</q-avatar>
+                        <q-avatar
+                            class="q-mr-md"
+                            color="purple"
+                            text-color="white"
+                        >{{ msg.sender_name.split('')[0] }}</q-avatar>
 
-                        <q-chat-message 
+                        <q-chat-message
                             :name="msg.sender_name"
                             :text="[msg.msg_text]"
                             :stamp="msg.msg_age"
                             text-color="white"
-                            bg-color="accent"
+                            :bg-color="msg.mention ? 'accent' : 'purple'"
                         />
                     </div>
                 </div>
-                
             </div>
         </q-infinite-scroll>
 
         <q-page-sticky expand position="top" class="current-channel">
             <q-toolbar class="bg-white text-black">
-                <q-btn
-                    dense
-                    flat
-                    rounded
-                    icon="delete"
-                    color="red"
-                    class="invisible"
-                >Delete Channel></q-btn>
+                <q-btn dense flat rounded icon="delete" @click="confirm = true" color="red">
+                    <q-label v-if="$q.screen.gt.xs">Delete Channel</q-label>
+                </q-btn>
                 <q-toolbar-title class="text-center">
-                    Active Channel -
+                    <q-label v-if="$q.screen.gt.xs">Active Channel -&nbsp;</q-label>
+
                     <span class="text-weight-bold text-primary">{{ channel_n }}</span>
                 </q-toolbar-title>
 
-                <q-btn
-                    dense
-                    flat
-                    rounded
-                    icon="delete"
-                    @click="confirm = true"
-                    color="red"
-                >Delete Channel</q-btn>
+                <q-btn dense flat rounded icon-right="logout" color="secondary">
+                    <q-label v-if="$q.screen.gt.xs">Leave Channel&nbsp;</q-label>
+                </q-btn>
             </q-toolbar>
         </q-page-sticky>
     </div>
@@ -78,6 +76,9 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
+    <q-page-sticky expand position="bottom-left" style="margin-left:10px; margin-bottom:5px">
+        <UserTyping></UserTyping>
+    </q-page-sticky>
 </template>
 <style scoped>
 .current-channel {
@@ -86,20 +87,31 @@
 </style>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-
+import UserTyping from './UserTyping.vue';
 import { Message } from './interface/models';
-
+import MessageSendBox from "./MessageSendBox.vue";
+import { useQuasar } from "quasar";
 export default defineComponent({
+    components: { UserTyping, MessageSendBox },
     setup() {
         const items = ref([{}, {}, {}, {}, {}, {}, {}])
+        const $q = useQuasar()
+
+
 
         return {
             items,
             confirm: ref(false),
             onLoad(index: any, done: any) {
                 setTimeout(() => {
-                    items.value.splice(0, 0, {}, {}, {}, {}, {}, {}, {})
-                    done()
+                    $q.notify({
+                        position: 'top',
+                        message: 'Jane wrote a message',
+                        color: 'accent',
+
+                    })
+
+
                 }, 2000)
             }
         }
@@ -113,16 +125,16 @@ export default defineComponent({
         curr_messages(): Message[] {
             let curr_msgs: Message[] = []
             switch (this.channel_n) {
-                case('Public1'):
+                case ('Public1'):
                     curr_msgs = this.messages1
                     break;
-                case('Public2'):
+                case ('Public2'):
                     curr_msgs = this.messages2
                     break;
                 case ('Private1'):
                     curr_msgs = this.messages3
                     break;
-                default: 
+                default:
                     break;
             }
             return curr_msgs
@@ -130,24 +142,24 @@ export default defineComponent({
     },
     data() {
         const messages1: Message[] = [
-            {id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'Hey, how are you?'},
-            {id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'doin fine, hbu?'},
-            {id: 3, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'I just feel like typing a really, really, REALLY long message to annoy you...'},
-            {id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'Did it work?'}
+            { id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'This message includes a mention @messie', mention: true },
+            { id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'doin fine, hbu?', mention: false },
+            { id: 3, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'I just feel like typing a really, really, REALLY long message to annoy you...', mention: false },
+            { id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'Did it work?', mention: false }
         ]
 
         const messages2: Message[] = [
-            {id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg2 ja'},
-            {id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'mgs 2 doin fine, hbu?'},
-            {id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'mgs 2 I just feel like typing a really, really, REALLY long message to annoy you...'},
-            {id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'msg2 Did it work?'}
+            { id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg2 ja', mention: false },
+            { id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'This message includes a mention @messie', mention: true },
+            { id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'mgs 2 I just feel like typing a really, really, REALLY long message to annoy you...', mention: false },
+            { id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'msg2 Did it work?', mention: false }
         ]
 
         const messages3: Message[] = [
-            {id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg 3 Hey, how are you?'},
-            {id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'msg3 doin fine, hbu?'},
-            {id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'msg3 I just feel like typing a really, really, REALLY long message to annoy you...'},
-            {id: 4, sender_name: "me", sender_is_user: true, msg_age: '1 minute ago', msg_text: 'msg3 Did it work?'}
+            { id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg 3 Hey, how are you?', mention: false },
+            { id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'This message includes a mention @messie', mention: true },
+            { id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'msg3 I just feel like typing a really, really, REALLY long message to annoy you...', mention: false },
+            { id: 4, sender_name: "me", sender_is_user: true, msg_age: '1 minute ago', msg_text: 'msg3 Did it work?', mention: false }
         ]
 
         return {
@@ -161,15 +173,15 @@ export default defineComponent({
 </script>
 
 <style>
-    .msg_group_left {
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-end
-    }
+.msg_group_left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
 
-    .msg_group_right {
-        display: flex;
-        justify-content: flex-end;
-        align-items: flex-end
-    }
+.msg_group_right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
 </style>

@@ -85,7 +85,14 @@
     display: flex;
     justify-content: center;
 ">
-            <q-btn dense icon="add" flat color="blue" style="margin-top:15px">Create a new channel</q-btn>
+            <q-btn
+                dense
+                rounded
+                icon="add"
+                flat
+                color="blue"
+                style="margin-top:15px"
+            >Create a new channel</q-btn>
         </div>
     </q-drawer>
 </template>

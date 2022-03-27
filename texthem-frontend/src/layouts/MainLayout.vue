@@ -6,7 +6,6 @@
         <q-footer elevated class="bg-primary">
             <MessageSendBox></MessageSendBox>
         </q-footer>
-
         <q-page-container>
             <router-view />
         </q-page-container>

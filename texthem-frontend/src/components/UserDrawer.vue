@@ -1,23 +1,37 @@
 <template>
     <q-drawer v-model="rightSideDrawer" side="right" elevated>
-        <button @click="toggle_random">Toggle random</button>
-
+        <div class="row justify-center">
+            <q-btn color="primary" @click="toggle_random">
+                Shuffle offline/online users
+                <q-tooltip
+                    class="bg-accent"
+                >we can test animations of users going online/offline. Not all online members are automatically typing, this is a demo</q-tooltip>
+            </q-btn>
+        </div>
         <q-item-label header>Online</q-item-label>
-        <TransitionGroup name="list" tag="ul">
+        <TransitionGroup name="list">
             <q-item
                 v-for="item in online_list"
                 :key="item.username"
-                class="q-mb-sm"
                 clickable
+                class="q-my-sm"
                 @click="() => show_user(item)"
                 v-ripple
             >
+                <q-item-section side>
+                    <q-spinner-comment color="secondary" size="2em" />
+                </q-item-section>
                 <q-item-section avatar>
-                    <q-avatar color="primary" text-color="white">{{ item.username.split('')[0] }}</q-avatar>
+                    <q-avatar
+                        color="yellow"
+                        text-color="primary"
+                        class="circle"
+                    >{{ item.username.split('')[0] }}</q-avatar>
                 </q-item-section>
 
                 <q-item-section>
                     <q-item-label>{{ item.username }}</q-item-label>
+                    <q-item-label caption>is writing...</q-item-label>
                 </q-item-section>
 
                 <q-item-section side>
@@ -51,13 +65,15 @@
             </q-item>
         </TransitionGroup>
     </q-drawer>
-    <q-dialog v-model="user_dialog" transition-show="rotate" transition-hide="rotate">
-        <q-card>
+    <q-dialog v-model="user_dialog" transition-show="fade" transition-hide="fade">
+        <q-card style="width: 700px; max-width: 80vw;">
             <q-card-section class="row items-center justify-center">
                 <q-avatar color="primary" text-color="grey">{{ clicked_user.username.split('')[0] }}</q-avatar>
                 <span class="q-ml-sm">{{ clicked_user.username }}</span>
             </q-card-section>
-            <q-card-section>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.</q-card-section>
+            <q-card-section>
+                <q-input filled v-model="typedMsg" autogrow disable readonly />
+            </q-card-section>
             <q-card-actions align="right">
                 <q-btn flat label="Exit" color="primary" v-close-popup />
             </q-card-actions>
@@ -86,7 +102,8 @@ export default defineComponent({
             { username: 'Peter', online: false },
             { username: 'Suzan', online: true }
         ]
-        return { members }
+        const typedMsg = "This message is being typed.. dont look in here"
+        return { members, typedMsg }
     },
     computed: {
 

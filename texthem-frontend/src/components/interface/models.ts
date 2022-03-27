@@ -20,13 +20,14 @@ export interface Channel {
 }
 
 export interface Invitation {
-    channel_name: string
+    channel_name: string;
 }
 
 export interface Message {
     id: number;
+    mention: boolean;
     sender_name: string;
-    sender_is_user: boolean
+    sender_is_user: boolean;
     msg_text: string;
-    msg_age: string
+    msg_age: string;
 }

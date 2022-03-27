@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <q-btn round class="without-icon" unelevated>
+        <q-btn round outline class="without-icon" unelevated>
             <q-avatar :size="size">
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
