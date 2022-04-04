@@ -25,7 +25,7 @@
                         <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
                     </q-avatar>
 
-                    <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
+                    <div class="text-subtitle1 q-mt-sm q-mb-sm"> Meno Priezvisko </div>
 
                     <q-btn color="primary" label="Logout" push size="sm" v-close-popup />
                 </div>

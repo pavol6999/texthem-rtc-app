@@ -96,14 +96,34 @@ export default defineComponent({
     },
     name: "UserDrawer",
     data() {
-        const members: Member[] = [
+        const users1: Member[] = [
             { username: 'John', online: true },
             { username: 'Anna', online: false },
             { username: 'Peter', online: false },
             { username: 'Suzan', online: true }
         ]
+
+        const users2: Member[] = [
+            { username: 'Brock', online: true },
+            { username: 'Roman', online: true },
+            { username: 'Ferdo', online: false },
+            { username: 'Alfred', online: false }
+        ]
+
+        const users3: Member[] = [
+            { username: 'Waldo', online: true },
+            { username: 'William', online: true },
+            { username: 'Martha', online: false },
+            { username: 'Yvonne', online: false }
+        ]
+
         const typedMsg = "This message is being typed.. dont look in here"
-        return { members, typedMsg }
+        return { 
+            typedMsg,
+            users1,
+            users2,
+            users3 
+        }
     },
     computed: {
 
@@ -118,22 +138,39 @@ export default defineComponent({
         }
         ,
         online_list(): Member[] {
-            return this.members.filter(e => e.online === true)
+            return this.curr_users().filter(e => e.online === true)
         },
         offline_list(): Member[] {
-            return this.members.filter(e => e.online === false)
+            return this.curr_users().filter(e => e.online === false)
         }
 
     },
     methods: {
         toggle_random(): void {
-            let idx = Math.floor(Math.random() * this.members.length)
-            this.members[idx].online = !this.members[idx].online
+            let idx = Math.floor(Math.random() * this.curr_users().length)
+            this.curr_users()[idx].online = !this.curr_users()[idx].online
         },
         show_user(member: Member): void {
             this.clicked_user = member
             this.user_dialog = true
 
+        },
+        curr_users(): Member[] {
+            let curr: Member[] = []
+            switch (this.$router.currentRoute.value.params.channel) {
+                case ('Public1'):
+                    curr = this.users1
+                    break;
+                case ('Public2'):
+                    curr = this.users2
+                    break;
+                case ('Private1'):
+                    curr = this.users3
+                    break;
+                default:
+                    break;
+            }
+            return curr
         }
     }
 
