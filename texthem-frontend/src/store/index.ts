@@ -11,6 +11,9 @@ import { UserStateInterface } from './userStore/state';
 import UserStore from './userStore';
 import VuexPersistence from 'vuex-persist';
 
+import auth from './auth';
+import type { AuthStateInterface } from './auth/state';
+
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
 
@@ -27,7 +30,7 @@ export interface StateInterface {
     // Define your own store structure, using submodules if needed
     // example: ExampleStateInterface;
     // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-    example: unknown;
+    auth: AuthStateInterface;
     mainStore: GlobalStateInterface;
     UserStore: UserStateInterface;
 }
@@ -53,6 +56,7 @@ export default store(function (/* { ssrContext } */) {
             // example
             mainStore,
             UserStore,
+            auth,
         },
 
         // enable strict mode (adds overhead!)

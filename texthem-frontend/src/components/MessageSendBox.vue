@@ -1,17 +1,8 @@
 <template>
     <q-toolbar class="justify-center">
-        <q-input
-            bottom-slots
-            hide-bottom-space
-            v-model="text"
-            label="Write your message !"
-            dark
-            rounded
-            standout
-            maxlength="128"
-            class="chat-box align-center"
-            v-bind:style="$q.screen.lt.md ? { 'width': '100%' } : { 'width': '50%' }"
-        >
+        <q-input bottom-slots hide-bottom-space v-model="text" label="Write your message !" dark rounded standout
+            maxlength="128" class="chat-box align-center"
+            v-bind:style="$q.screen.lt.md ? { 'width': '100%' } : { 'width': '80%' }">
             <template v-slot:before>
                 <UserProfile size="3.5rem"></UserProfile>
             </template>

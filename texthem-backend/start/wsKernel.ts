@@ -1,26 +1,25 @@
 /*
 |--------------------------------------------------------------------------
-| Application middleware
+| Websocket middleware
 |--------------------------------------------------------------------------
 |
-| This file is used to define middleware for HTTP requests. You can register
+| This file is used to define middleware for websocket namespaces. You can register
 | middleware as a `closure` or an IoC container binding. The bindings are
 | preferred, since they keep this file clean.
 |
 */
 
-import Server from '@ioc:Adonis/Core/Server'
+import Ws from '@ioc:Ruby184/Socket.IO/Ws'
 
 /*
 |--------------------------------------------------------------------------
 | Global middleware
 |--------------------------------------------------------------------------
 |
-| An array of global middleware, that will be executed in the order they
-| are defined for every HTTP requests.
+| An array of global middleware, that will be executed on all the registered namespaces
 |
 */
-Server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')])
+Ws.middleware.register([() => import('App/Middleware/Auth')])
 
 /*
 |--------------------------------------------------------------------------
@@ -29,15 +28,15 @@ Server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')])
 |
 | Named middleware are defined as key-value pair. The value is the namespace
 | or middleware function and key is the alias. Later you can use these
-| alias on individual routes. For example:
+| alias on individual namespaces. For example:
 |
 | { auth: () => import('App/Middleware/Auth') }
 |
 | and then use it as follows
 |
-| Route.get('dashboard', 'UserController.dashboard').middleware('auth')
+| Ws.namespace('chat').middleware('auth')
 |
 */
-Server.middleware.registerNamed({
-  auth: () => import('App/Middleware/Auth'),
+Ws.middleware.registerNamed({
+  // auth: () => import('App/Middleware/Auth')
 })

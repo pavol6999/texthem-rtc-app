@@ -29,7 +29,7 @@ module.exports = configure(function (ctx) {
         // app boot file (/src/boot)
         // --> boot files are part of "main.js"
         // https://quasar.dev/quasar-cli/boot-files
-        boot: ['axios'],
+        boot: ['axios', 'auth'],
 
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
         css: ['app.scss'],
@@ -48,9 +48,16 @@ module.exports = configure(function (ctx) {
             'material-icons', // optional, you are not bound to it
         ],
 
-        // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
+        sourceFiles: { store: 'src/store/index.ts' },
         build: {
-            vueRouterMode: 'hash', // available values: 'hash', 'history'
+            vueRouterMode: 'history', // available values: 'hash', 'history'
+            env: {
+                API_URL:
+                    process.env.API_URL ||
+                    (ctx.dev
+                        ? 'http://localhost:3333'
+                        : 'https://prod.api.com'),
+            }, // available values: 'hash', 'history'
 
             // transpile: false,
             // publicPath: '/',

@@ -1,29 +1,30 @@
 version: "3.8"
 services:
-  adonis:
-    container_name: adonis
-    restart: always
-    build:
-      context: /texthem-backend/
-      target: dependencies
-    ports:
-      - 3333:3333
-      - 9229:9229
-    env_file:
-      - /texthem-backend/.env
-    volumes:
-      -  /home/app/node_modules
-      - ./texthem-backend:/home/node/app
-    command: dumb-init node ace serve --watch --node-args="--inspect=0.0.0.0"
-  # database:
-  #   image: "postgres" # use latest official postgres version
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_HOST: localhost
-  #     POSTGRES_PORT: 5433
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: texthem
+  # adonis:
+  #   container_name: adonis
+  #   restart: always
+  #   build:
+  #     context: /texthem-backend/
+  #     target: dependencies
+  #   ports:
+  #     - 3333:3333
+  #     - 9229:9229
+  #   env_file:
+  #     - /texthem-backend/.env
   #   volumes:
-  #     - ./data:/var/lib/postgresql/data # persist data even if container shuts down
-  #   ports: 
-  #     - "5433:5432" # expose port 5432 on host
+  #     -  /home/app/node_modules
+  #     - ./texthem-backend:/home/node/app
+  #   command: dumb-init node ace serve --watch --node-args="--inspect=0.0.0.0"
+  database:
+    image: "postgres" # use latest official postgres version
+    container_name: "pg-database"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5433
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: texthem
+    volumes:
+      - ./data:/var/lib/postgresql/data # persist data even if container shuts down
+    ports:
+      - "5433:5432" # expose port 5432 on host

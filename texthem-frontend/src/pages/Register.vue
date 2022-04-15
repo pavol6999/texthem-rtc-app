@@ -12,25 +12,15 @@
             <div class="col-0 col-md-6 flex justify-center content-center">
                 <img src="~assets/register.svg" class="responsive" />
             </div>
-            <div
-                :class="$q.screen.lt.xl ? 'justify-center' : ''"
-                class="col-12 col-md-6 flex content-center"
-            >
+            <div :class="$q.screen.lt.xl ? 'justify-center' : ''" class="col-12 col-md-6 flex content-center">
                 <q-card v-bind:style="$q.screen.lt.sm ? { 'width': '80%' } : { 'width': '50%' }">
                     <q-card-section>
                         <!-- <q-avatar size="103px" class="absolute-center avatar">
 							<img src="~assets/avatar.png" />
                         </q-avatar>-->
                         <q-avatar size="120px" class="absolute-center avatar">
-                            <video
-                                width="240"
-                                height="140"
-                                style="background-size: contain"
-                                poster="~assets/avatar.png"
-                                autoplay
-                                loop
-                                muted
-                            >
+                            <video width="240" height="140" style="background-size: contain" poster="~assets/avatar.png"
+                                autoplay loop muted>
                                 <source type="video/webm" src="~assets/profile.webm" />
                                 <source type="video/mp4" src="~assets/profile.mp4" />
                             </video>
@@ -47,44 +37,45 @@
 
                     <q-card-section>
                         <q-form class="q-gutter-md" @submit.prevent="onSubmit">
-                            <q-input
-                                label="Nickname"
-                                standout="bg-secondary text-black"
-                                v-model="nickname"
-                            ></q-input>
+                            <q-input label="Nickname" standout="bg-secondary text-black" v-model.trim="form.nickname">
+                            </q-input>
 
-                            <q-input
-                                label="Email Adress"
-                                standout="bg-secondary text-black"
-                                v-model="email"
-                            >
+                            <q-input label="Email Adress" standout="bg-secondary text-black" v-model.trim="form.email">
                                 <template v-slot:prepend>
                                     <q-icon name="mail" />
                                 </template>
                             </q-input>
-                            <q-input
-                                label="Password"
-                                type="password"
-                                standout="bg-secondary text-black"
-                                v-model="password"
-                            ></q-input>
-                            <q-input
-                                label="Confirm Password"
-                                type="password"
-                                standout="bg-secondary text-black"
-                                v-model="confirmPassword"
-                            ></q-input>
+
+                            <q-input v-model.trim="form.password" label="Password" :type="isPwd ? 'password' : 'text'"
+                                standout="bg-secondary text-black">
+                                <template v-slot:prepend>
+                                    <q-icon name="lock" />
+                                </template>
+                                <template v-slot:append>
+                                    <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                                        @click="isPwd = !isPwd" />
+                                </template>
+                            </q-input>
+                            <!-- <q-input label="Password" type="password" standout="bg-secondary text-black"
+                                v-model="form.password"></q-input> -->
+
+                            <q-input v-model.trim="form.passwordConfirmation" label="Confirm Password"
+                                :type="isPwd ? 'password' : 'text'" standout="bg-secondary text-black">
+                                <template v-slot:prepend>
+                                    <q-icon name="lock" />
+                                </template>
+                                <template v-slot:append>
+                                    <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                                        @click="isPwd = !isPwd" />
+                                </template>
+                            </q-input>
+
                             <div>
-                                <q-btn
-                                    class="full-width"
-                                    color="primary"
-                                    type="submit"
-                                    label="Register"
-                                    rounded
-                                />
+                                <q-btn class="full-width" :loading="loading" color="primary" type="submit"
+                                    label="Register" rounded />
                                 <div class="text-center q-mt-sm q-gutter-lg">
                                     <router-link class="text-grey-6" to="/">Forgot password?</router-link>
-                                    <router-link class="text-grey-6" to="/login">Sign in</router-link>
+                                    <router-link class="text-grey-6" :to="{ name: 'login' }">Sign in</router-link>
                                 </div>
                             </div>
                         </q-form>
@@ -97,16 +88,18 @@
 
 <script lang="ts">
 
-interface regis {
-    nickname: string;
-    password: string;
-    confirmPassword: string;
-    email: string;
+interface State {
+    form: {
+        nickname: string,
+        email: string,
+        password: string,
+        passwordConfirmation: string
+    }
 }
 
 
 import { useQuasar } from 'quasar'
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, ref } from 'vue';
 
 import useVuelidate from '@vuelidate/core'
 import {
@@ -115,6 +108,8 @@ import {
     required,
     helpers
 } from '@vuelidate/validators'
+import { StateInterface } from 'src/store';
+import { RouteLocationRaw } from 'vue-router';
 let $q = useQuasar()
 
 
@@ -123,7 +118,8 @@ export default defineComponent({
 
     setup() {
         return {
-            v$: useVuelidate({ $autoDirty: true })
+            v$: useVuelidate({ $autoDirty: true }),
+            isPwd: ref(true),
         }
     },
 
@@ -131,12 +127,23 @@ export default defineComponent({
         $q = useQuasar()
     },
 
-    data(): regis {
+    data(): State {
         return {
-            nickname: '',
-            password: '',
-            confirmPassword: '',
-            email: ''
+            form:
+            {
+                nickname: '',
+                password: '',
+                passwordConfirmation: '',
+                email: ''
+            }
+        }
+    },
+    computed: {
+        redirectTo(): RouteLocationRaw {
+            return { name: 'login' }
+        },
+        loading(): boolean {
+            return this.$store.state.auth.status === 'pending'
         }
     },
 
@@ -146,69 +153,59 @@ export default defineComponent({
 
             const register_correct = await this.v$.$validate()
 
-            /*
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            if (!this.nickname || !this.password) {
-      
-              $q.notify({
-                group: false,
-                type: 'negative',
-                message: 'Please fill in all fields'
-              })
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            else if (this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/) === null) {
-              $q.notify({
-                group: false,
-                type: 'negative',
-                message: 'Password must be at least 8 characters and contain at least one number, one uppercase and one lowercase letter'
-              })
-            }
-            */
-
+            let first_err = this.v$.$errors.map(e => e.$message)[0]
             if (!register_correct) {
                 this.$q.notify({
                     color: 'red-4',
                     textColor: 'white',
                     icon: 'warning',
-                    message: this.v$.$errors.map(e => e.$message).join()
+                    message: <string>first_err
                 })
                 return
             }
-            if (this.password != this.confirmPassword) {
+            else if (this.form.password != this.form.passwordConfirmation) {
                 $q.notify({
                     color: 'red-4',
                     textColor: 'white',
                     icon: 'warning',
                     message: 'Passwords do not match'
                 })
+                return
             }
+            else {
+                this.$store.dispatch('auth/register', this.form).then(() => this.$router.push(this.redirectTo))
+            }
+
+
         }
     },
     validations() {
 
         const regexcheck = () => {
-            let test = this.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{0,}$/)
+            let test = this.form.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{0,}$/)
             return test === null ? false : true;
         }
 
         const regexcheck_mail = () => {
-            return /^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$/.test(this.email)
+            return /^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$/.test(this.form.email)
         }
 
         return {
-            nickname: {
-                required: helpers.withMessage(' Nickname cannot be empty', required),
-                minLength: helpers.withMessage(() => ` Nickname has to be at least 5 characters long`, minLength(5))
-            },
-            password: {
-                required: helpers.withMessage(' Password cannot be empty ', required),
-                minLength: helpers.withMessage(() => ` Password has to be at least 8 characters long`, minLength(8)),
-                regexcheck: helpers.withMessage(' Password has to be alphanumeric', regexcheck)
-            },
-            email: {
-                required: helpers.withMessage(' Email is required', required),
-                regexcheck_mail: helpers.withMessage(' Email is in invalid format', regexcheck_mail)
+            form:
+            {
+                nickname: {
+                    required: helpers.withMessage(' Nickname cannot be empty', required),
+                    minLength: helpers.withMessage(() => ` Nickname has to be at least 5 characters long`, minLength(5))
+                },
+                password: {
+                    required: helpers.withMessage(' Password cannot be empty ', required),
+                    minLength: helpers.withMessage(() => ` Password has to be at least 8 characters long`, minLength(8)),
+                    regexcheck: helpers.withMessage(' Password must contain at least 1 number and 1 capital letter', regexcheck)
+                },
+                email: {
+                    required: helpers.withMessage(' Email is required', required),
+                    regexcheck_mail: helpers.withMessage(' Email is in invalid format', regexcheck_mail)
+                }
             }
         }
     }
