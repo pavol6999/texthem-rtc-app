@@ -126,13 +126,11 @@ export default defineComponent({
         }
     },
     computed: {
-
         rightSideDrawer: {
             get() {
                 return this.$store.state.mainStore.rightDrawerState
             },
             set(val: boolean) {
-
                 this.$store.commit('mainStore/toggleRightDrawer', val)
             },
         }
@@ -142,8 +140,10 @@ export default defineComponent({
         },
         offline_list(): Member[] {
             return this.curr_users().filter(e => e.online === false)
-        }
-
+        },
+        activeChannel() {
+            return this.$store.state.channels.active
+        },
     },
     methods: {
         toggle_random(): void {
@@ -153,11 +153,10 @@ export default defineComponent({
         show_user(member: Member): void {
             this.clicked_user = member
             this.user_dialog = true
-
         },
         curr_users(): Member[] {
             let curr: Member[] = []
-            switch (this.$router.currentRoute.value.params.channel) {
+            switch (this.activeChannel) {
                 case ('Public1'):
                     curr = this.users1
                     break;

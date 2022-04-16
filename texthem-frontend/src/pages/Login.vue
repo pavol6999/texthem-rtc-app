@@ -106,16 +106,11 @@ export default defineComponent({
                 password: '',
                 remember: false
             }
-
         }
     },
-
     methods: {
-
         async onSubmit() {
-
             const login_correct = await this.v$.$validate()
-            console.log("kkt");
             if (!login_correct) {
                 this.$q.notify({
                     color: 'red-4',

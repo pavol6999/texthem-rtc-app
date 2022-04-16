@@ -1,7 +1,7 @@
 <template>
     <q-page class="flex column">
-        <ConversationBox v-if="channel" :channel_n="channel"></ConversationBox>
-        <NoChannelPage v-if="!channel"></NoChannelPage>
+        <ConversationBox v-if="activeChannel != null"></ConversationBox>
+        <NoChannelPage v-else></NoChannelPage>
     </q-page>
 </template>
 
@@ -15,6 +15,11 @@ export default defineComponent({
     props: {
         channel: {
             type: String
+        }
+    },
+    computed: {
+        activeChannel(): string | null {
+            return this.$store.state.channels.active || null
         }
     }
 });

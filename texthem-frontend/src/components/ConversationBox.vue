@@ -13,12 +13,12 @@
                         <q-chat-message :name="msg.sender_name" :text="[msg.msg_text]" :stamp="msg.msg_age" sent
                             text-color="white" bg-color="primary" />
 
-                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ msg.sender_name.split('')[0] }}
+                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ initial(msg.sender_name) }}
                         </q-avatar>
                     </div>
 
                     <div class="msg_group_left" v-else>
-                        <q-avatar class="q-mr-md" color="purple" text-color="white">{{ msg.sender_name.split('')[0] }}
+                        <q-avatar class="q-mr-md" color="purple" text-color="white">{{ initial(msg.sender_name) }}
                         </q-avatar>
 
                         <q-chat-message :name="msg.sender_name" :text="[msg.msg_text]" :stamp="msg.msg_age"
@@ -31,16 +31,16 @@
         <q-page-sticky expand position="top" class="current-channel">
             <q-toolbar class="bg-white text-black">
                 <q-btn dense flat rounded icon="delete" @click="confirm = true" color="red">
-                    <q-label v-if="$q.screen.gt.xs">Delete Channel</q-label>
+                    <span v-if="$q.screen.gt.xs">Delete Channel</span>
                 </q-btn>
                 <q-toolbar-title class="text-center">
-                    <q-label v-if="$q.screen.gt.xs">Active Channel -&nbsp;</q-label>
+                    <span v-if="$q.screen.gt.xs">Active Channel -&nbsp;</span>
 
                     <span class="text-weight-bold text-primary">{{ activeChannel }}</span>
                 </q-toolbar-title>
 
                 <q-btn dense flat rounded icon-right="logout" color="secondary">
-                    <q-label v-if="$q.screen.gt.xs">Leave Channel&nbsp;</q-label>
+                    <span v-if="$q.screen.gt.xs">Leave Channel&nbsp;</span>
                 </q-btn>
             </q-toolbar>
         </q-page-sticky>
@@ -80,8 +80,6 @@ export default defineComponent({
         const items = ref([{}, {}, {}, {}, {}, {}, {}])
         const $q = useQuasar()
 
-
-
         return {
             items,
             confirm: ref(false),
@@ -104,10 +102,18 @@ export default defineComponent({
             type: String
         }
     },
+    computed: {
+        activeChannel(): string {
+            return this.$store.state.channels.active || 'no channel'
+        }
+    },
     methods: {
+        initial(name: string): string {
+            return name.toUpperCase().split('')[0]
+        },
         curr_messages(): Message[] {
             let curr_msgs: Message[] = []
-            switch (this.channel_n) {
+            switch (this.activeChannel) {
                 case ('Public1'):
                     curr_msgs = this.messages1
                     break;

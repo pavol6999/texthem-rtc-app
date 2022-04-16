@@ -3,7 +3,8 @@
         <q-input bottom-slots hide-bottom-space v-model="message" label="Write your message !" dark rounded standout
             maxlength="128" class="chat-box align-center"
             v-bind:style="$q.screen.lt.md ? { 'width': '100%' } : { 'width': '80%' }" :disable="loading"
-            @keydown.enter.prevent="send">
+            @keydown.enter.prevent="send"
+        >
             <template v-slot:before>
                 <UserProfile size="3.5rem"></UserProfile>
             </template>

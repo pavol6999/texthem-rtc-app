@@ -26,6 +26,7 @@ const mutation: MutationTree<ChannelsStateInterface> = {
         delete state.messages[channel];
     },
     SET_ACTIVE(state, channel: string) {
+        console.log("it happened")
         state.active = channel;
     },
     NEW_MESSAGE(

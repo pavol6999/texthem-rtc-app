@@ -8,8 +8,8 @@ import {
 } from 'vuex';
 import mainStore from './mainStore';
 import { GlobalStateInterface } from './mainStore/state';
-import { UserStateInterface } from './userStore/state';
-import UserStore from './userStore';
+// import { UserStateInterface } from './userStore/state';
+// import UserStore from './userStore';
 import VuexPersistence from 'vuex-persist';
 
 import auth from './auth';
@@ -34,7 +34,7 @@ export interface StateInterface {
     // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
     auth: AuthStateInterface;
     mainStore: GlobalStateInterface;
-    UserStore: UserStateInterface;
+    // UserStore: UserStateInterface;
     channels: ChannelsStateInterface;
 }
 
@@ -58,7 +58,7 @@ export default store(function (/* { ssrContext } */) {
         modules: {
             // example
             mainStore,
-            UserStore,
+            // UserStore,
             auth,
             channels,
         },

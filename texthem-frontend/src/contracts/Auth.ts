@@ -21,6 +21,9 @@ export interface LoginCredentials {
 export interface User {
     id: number;
     email: string;
-    createdAt: string;
-    updatedAt: string;
+    nickname: string
+    remember_me_token?: string
+    created_at: string;
+    updated_at: string;
+    notifications?: boolean
 }

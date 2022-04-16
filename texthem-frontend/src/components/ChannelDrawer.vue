@@ -3,10 +3,10 @@
         <div class="text-h4 row justify-center" style="margin-top:15px">Channels</div>
         <q-expansion-item v-if="invitation_list.length !== 0" label="Invitations" header-class="text-yellow"
             icon="mail">
-            <q-item v-for="item in invitation_list" :active="link === item.channel_name" :key="item.channel_name"
+            <q-item v-for="item in invitation_list" :active="activeChannel === item.channel_name" :key="item.channel_name"
                 active-class="sel_item">
                 <q-item-section avatar>
-                    <q-avatar color="primary">{{ item.channel_name.split('')[0] }}</q-avatar>
+                    <q-avatar color="primary">{{ initial(item.channel_name) }}</q-avatar>
                 </q-item-section>
 
                 <q-item-section>
@@ -21,10 +21,10 @@
         <q-separator />
 
         <q-expansion-item v-if="public_list.length !== 0" label="Public channels" icon="public" class="q-mb-sm">
-            <q-item v-for="item in public_list" :active="link === item.name" :key="item.name" clickable v-ripple
+            <q-item v-for="item in public_list" :active="activeChannel === item.name" :key="item.name" clickable v-ripple
                 @click="() => switch_channel(item.name)" active-class="sel_item">
                 <q-item-section avatar>
-                    <q-avatar color="primary">{{ item.name.split('')[0] }}</q-avatar>
+                    <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
                 </q-item-section>
 
                 <q-item-section>
@@ -36,10 +36,10 @@
         <q-separator />
 
         <q-expansion-item v-if="private_list.length !== 0" label="Private channels" icon="unlocked" class="q-mb-sm">
-            <q-item v-for="item in private_list" :active="link === item.name" :key="item.name" clickable v-ripple
+            <q-item v-for="item in private_list" :active="activeChannel === item.name" :key="item.name" clickable v-ripple
                 @click="() => switch_channel(item.name)" active-class="sel_item">
                 <q-item-section avatar>
-                    <q-avatar color="primary">{{ item.name.split('')[0] }}</q-avatar>
+                    <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
                 </q-item-section>
 
                 <q-item-section>
@@ -84,7 +84,6 @@ export default defineComponent({
             channels,
             invitations,
             collapse_open: false,
-            link: ref(this.$router.currentRoute.value.params.channel),
             message: '',
             loading: false
         }
@@ -113,15 +112,13 @@ export default defineComponent({
             channels: 'joinedChannels',
             lastMessageOf: 'lastMessageOf'
         }),
-
         activeChannel() {
             return this.$store.state.channels.active
         }
     },
     methods: {
-        switch_channel(dest: string) {
-            this.link = dest
-            this.$router.push("/channels/" + dest)
+        initial(name: string): string {
+            return name.toUpperCase().split('')[0]
         },
         async send() {
             this.loading = true
@@ -133,8 +130,11 @@ export default defineComponent({
             setActiveChannel: 'SET_ACTIVE'
         }),
         ...mapActions('auth', ['logout']),
-        ...mapActions('channels2', ['addMessage'])
+        ...mapActions('channels2', ['addMessage']),
 
+        switch_channel(dest: string) {
+            this.setActiveChannel(dest)
+        }
     }
 });
 </script>

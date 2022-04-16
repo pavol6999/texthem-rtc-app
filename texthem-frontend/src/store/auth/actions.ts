@@ -3,16 +3,20 @@ import { StateInterface } from '../index';
 import { AuthStateInterface } from './state';
 import { authService, authManager } from 'src/services';
 import { LoginCredentials, RegisterData } from 'src/contracts';
+import { QPullToRefresh } from 'quasar';
 
 const actions: ActionTree<AuthStateInterface, StateInterface> = {
     async check({ state, commit, dispatch }) {
         try {
             commit('AUTH_START');
             const user = await authService.me();
+
             if (user?.id !== state.user?.id) {
+                // just logged in
                 await dispatch('channels/join', 'general', { root: true });
             }
             commit('AUTH_SUCCESS', user);
+
             return user !== null;
         } catch (err) {
             commit('AUTH_ERROR', err);

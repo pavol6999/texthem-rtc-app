@@ -1,9 +1,10 @@
 <template>
     <div class="q-pa-md">
         <q-btn round outline class="without-icon" unelevated>
-            <q-avatar :size="size">
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            <q-avatar color="purple" text-color="white" :size="size">
+                {{ initial }}
             </q-avatar>
+
             <q-menu class="row q-pa-md">
                 <div class="column">
                     <div class="text-h6 q-mb-md">Settings</div>
@@ -15,11 +16,11 @@
                 <q-separator vertical inset class="q-mx-lg" />
 
                 <div class="column items-center">
-                    <q-avatar size="72px">
-                        <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                    <q-avatar color="primary" text-color="white" size="72px">
+                        {{ initial }}
                     </q-avatar>
 
-                    <div class="text-subtitle1 q-mt-sm q-mb-sm"> Meno Priezvisko </div>
+                    <div class="text-subtitle1 q-mt-sm q-mb-sm"> {{ username }} </div>
 
                     <q-btn color="primary" label="Logout" @click="logout" push size="sm" />
                 </div>
@@ -49,14 +50,19 @@ export default defineComponent({
             away: ref(false)
         }
     },
-
     computed: {
+        username(): string {            
+            return this.$store.state.auth.user?.nickname || 'no name?'
+        },
+        initial(): string {
+            return this.username.toUpperCase().split('')[0]
+        },
         notifications: {
             get() {
-                return this.$store.state.UserStore.notifications
+                return this.$store.state.auth.user?.notifications || false
             },
             set(val: boolean) {
-                this.$store.commit('UserStore/setNotifications', val)
+                this.$store.commit('auth/setNotifications', val)
             }
         }
     },

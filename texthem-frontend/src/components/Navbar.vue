@@ -70,18 +70,22 @@ export default defineComponent({
                 this.$store.commit('mainStore/toggleLeftDrawer', val)
             },
         },
+        /*
         ...mapGetters('UserStore', {
             isLoggedIn: 'isLoggedIn'
         })
+        */
     },
     methods: {
         // ...mapMutations('mainStore', {
         //     toggleLeftDrawer: 'toggleLeftDrawer',
 
         // }),
+        /*
         ...mapMutations('UserStore', {
             changeLoggedStatus: 'changeLoggedStatus'
         }),
+        */
     }
 }
 

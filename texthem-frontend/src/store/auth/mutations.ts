@@ -15,6 +15,10 @@ const mutation: MutationTree<AuthStateInterface> = {
         state.status = 'error';
         state.errors = errors;
     },
+    setNotifications(state, val: boolean) {
+        if (state.user)
+            state.user.notifications = val
+    }
 };
 
 export default mutation;
