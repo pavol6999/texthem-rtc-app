@@ -113,8 +113,9 @@ export default defineComponent({
     methods: {
 
         async onSubmit() {
-            const login_correct = await this.v$.$validate()
 
+            const login_correct = await this.v$.$validate()
+            console.log("kkt");
             if (!login_correct) {
                 this.$q.notify({
                     color: 'red-4',
@@ -124,7 +125,7 @@ export default defineComponent({
                 })
                 return
             }
-            this.$store.dispatch('auth/login', this.credentials).then((a) => { console.log("kkt", a); this.$router.push(this.redirectTo) }).catch(err => {
+            this.$store.dispatch('auth/login', this.credentials).then((a) => { this.$router.push(this.redirectTo) }).catch(err => {
 
                 this.$q.notify({
                     color: 'red-4',

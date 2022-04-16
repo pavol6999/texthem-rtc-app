@@ -46,7 +46,7 @@ export default defineComponent({
     methods: {
         async send() {
             this.loading = true
-            await commandService.handle(this.message)
+            //await commandService.handle(this.message)
             await this.addMessage({ channel: this.activeChannel, message: this.message })
             this.message = ''
             this.loading = false

@@ -133,7 +133,7 @@ export default defineComponent({
             setActiveChannel: 'SET_ACTIVE'
         }),
         ...mapActions('auth', ['logout']),
-        ...mapActions('channels', ['addMessage'])
+        ...mapActions('channels2', ['addMessage'])
 
     }
 });
