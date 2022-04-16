@@ -15,6 +15,9 @@ const getters: GetterTree<ChannelsStateInterface, StateInterface> = {
             return messages.length > 0 ? messages[messages.length - 1] : null;
         };
     },
+    debug_all(context) {
+        return context
+    }
 };
 
 export default getters;

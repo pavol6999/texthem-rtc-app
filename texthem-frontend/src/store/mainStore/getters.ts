@@ -12,6 +12,9 @@ const getters: GetterTree<GlobalStateInterface, StateInterface> = {
     mobileNavbar(state: GlobalStateInterface) {
         return state.mobileNavbarState;
     },
+    debug_all(context) {
+        return context
+    }
 };
 
 export default getters;
