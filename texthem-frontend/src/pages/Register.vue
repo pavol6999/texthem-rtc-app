@@ -173,7 +173,17 @@ export default defineComponent({
                 return
             }
             else {
-                this.$store.dispatch('auth/register', this.form).then(() => this.$router.push(this.redirectTo))
+                this.$store.dispatch('auth/register', this.form).then(() => this.$router.push(this.redirectTo)).catch(
+                    (err) => {
+
+                        $q.notify({
+                            color: 'red-4',
+                            textColor: 'white',
+                            icon: 'warning',
+                            message: err.response.data.errors[0].message
+                        })
+                    }
+                )
             }
 
 

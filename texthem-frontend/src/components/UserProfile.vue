@@ -7,14 +7,8 @@
             <q-menu class="row q-pa-md">
                 <div class="column">
                     <div class="text-h6 q-mb-md">Settings</div>
-                    <q-toggle
-                        :model-value="notifications"
-                        checked-icon="check"
-                        color="red"
-                        @click="notifications = !notifications"
-                        unchecked-icon="clear"
-                        label="Notifications"
-                    />
+                    <q-toggle :model-value="notifications" checked-icon="check" color="red"
+                        @click="notifications = !notifications" unchecked-icon="clear" label="Notifications" />
                     <q-toggle v-model="away" label="Away" />
                 </div>
 
@@ -27,7 +21,7 @@
 
                     <div class="text-subtitle1 q-mt-sm q-mb-sm"> Meno Priezvisko </div>
 
-                    <q-btn color="primary" label="Logout" push size="sm" v-close-popup />
+                    <q-btn color="primary" label="Logout" @click="logout" push size="sm" />
                 </div>
             </q-menu>
         </q-btn>
@@ -43,6 +37,7 @@
 <script lang="ts">
 
 import { defineComponent, ref } from 'vue'
+import { mapActions } from 'vuex'
 
 export default defineComponent({
     props: {
@@ -64,6 +59,9 @@ export default defineComponent({
                 this.$store.commit('UserStore/setNotifications', val)
             }
         }
+    },
+    methods: {
+        ...mapActions('auth', ['logout']),
     }
 }
 )

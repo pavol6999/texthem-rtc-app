@@ -10,36 +10,19 @@
             <div class="column col justify-end q-pa-md">
                 <div v-for="msg in curr_messages()" :key="msg.id">
                     <div class="msg_group_right" v-if="msg.sender_is_user">
-                        <q-chat-message
-                            :name="msg.sender_name"
-                            :text="[msg.msg_text]"
-                            :stamp="msg.msg_age"
-                            sent
-                            text-color="white"
-                            bg-color="primary"
-                        />
+                        <q-chat-message :name="msg.sender_name" :text="[msg.msg_text]" :stamp="msg.msg_age" sent
+                            text-color="white" bg-color="primary" />
 
-                        <q-avatar
-                            class="q-ml-md"
-                            color="primary"
-                            text-color="white"
-                        >{{ msg.sender_name.split('')[0] }}</q-avatar>
+                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ msg.sender_name.split('')[0] }}
+                        </q-avatar>
                     </div>
 
                     <div class="msg_group_left" v-else>
-                        <q-avatar
-                            class="q-mr-md"
-                            color="purple"
-                            text-color="white"
-                        >{{ msg.sender_name.split('')[0] }}</q-avatar>
+                        <q-avatar class="q-mr-md" color="purple" text-color="white">{{ msg.sender_name.split('')[0] }}
+                        </q-avatar>
 
-                        <q-chat-message
-                            :name="msg.sender_name"
-                            :text="[msg.msg_text]"
-                            :stamp="msg.msg_age"
-                            text-color="white"
-                            :bg-color="msg.mention ? 'accent' : 'purple'"
-                        />
+                        <q-chat-message :name="msg.sender_name" :text="[msg.msg_text]" :stamp="msg.msg_age"
+                            text-color="white" :bg-color="msg.mention ? 'accent' : 'purple'" />
                     </div>
                 </div>
             </div>
@@ -53,7 +36,7 @@
                 <q-toolbar-title class="text-center">
                     <q-label v-if="$q.screen.gt.xs">Active Channel -&nbsp;</q-label>
 
-                    <span class="text-weight-bold text-primary">{{ channel_n }}</span>
+                    <span class="text-weight-bold text-primary">{{ activeChannel }}</span>
                 </q-toolbar-title>
 
                 <q-btn dense flat rounded icon-right="logout" color="secondary">

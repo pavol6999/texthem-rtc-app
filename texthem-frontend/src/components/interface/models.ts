@@ -4,8 +4,8 @@ export interface Member {
 }
 
 export interface Channel {
-    channel_name: string;
-    ch_type: string;
+    name: string;
+    type: string;
     // owner: Member;
     // members: Member[];
 }

@@ -68,6 +68,7 @@ interface State {
     credentials: {
         email: string;
         password: string;
+        remember: boolean;
     }
 }
 
@@ -102,7 +103,8 @@ export default defineComponent({
         return {
             credentials: {
                 email: '',
-                password: ''
+                password: '',
+                remember: false
             }
 
         }
@@ -122,7 +124,15 @@ export default defineComponent({
                 })
                 return
             }
-            this.$store.dispatch('auth/login', this.credentials).then(() => this.$router.push(this.redirectTo))
+            this.$store.dispatch('auth/login', this.credentials).then((a) => { console.log("kkt", a); this.$router.push(this.redirectTo) }).catch(err => {
+
+                this.$q.notify({
+                    color: 'red-4',
+                    textColor: 'white',
+                    icon: 'warning',
+                    message: err.response.data.errors.map((err: { message: string; }) => err.message.split(": ")[1])
+                })
+            })
 
         }
     },

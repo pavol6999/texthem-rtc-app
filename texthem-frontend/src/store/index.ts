@@ -1,4 +1,5 @@
 import { store } from 'quasar/wrappers';
+import channels from './channels';
 import { InjectionKey } from 'vue';
 import {
     createStore,
@@ -13,6 +14,7 @@ import VuexPersistence from 'vuex-persist';
 
 import auth from './auth';
 import type { AuthStateInterface } from './auth/state';
+import { ChannelsStateInterface } from './channels/state';
 
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
@@ -33,6 +35,7 @@ export interface StateInterface {
     auth: AuthStateInterface;
     mainStore: GlobalStateInterface;
     UserStore: UserStateInterface;
+    channels: ChannelsStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -57,6 +60,7 @@ export default store(function (/* { ssrContext } */) {
             mainStore,
             UserStore,
             auth,
+            channels,
         },
 
         // enable strict mode (adds overhead!)
