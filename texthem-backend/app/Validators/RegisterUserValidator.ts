@@ -40,5 +40,7 @@ export default class RegisterUserValidator {
    * }
    *
    */
-  public messages = {}
+  public messages = {
+    'email.unique': 'This email is already in use',
+  }
 }

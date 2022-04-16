@@ -20,3 +20,9 @@ Ws.namespace('/')
     console.log('websocket greeted: ', socket.id, msg)
     return 'hi'
   })
+
+// this is dynamic namespace, in controller methods we can use params.name
+Ws.namespace('channels/:name')
+  // .middleware('channel') // check if user can join given channel
+  .on('loadMessages', 'MessageController.loadMessages')
+  .on('addMessage', 'MessageController.addMessage')
