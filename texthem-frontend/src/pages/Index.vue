@@ -19,7 +19,7 @@ export default defineComponent({
     },
     computed: {
         activeChannel(): string | null {
-            return this.$store.state.channels.active || null
+            return this.$store.getters['channels/activeChannel']
         }
     }
 });

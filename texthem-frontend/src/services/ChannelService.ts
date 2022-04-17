@@ -11,10 +11,20 @@ class ChannelSocketManager extends SocketManager {
         this.socket.on('message', (message: SerializedMessage) => {
             store.commit('channels/NEW_MESSAGE', { channel, message });
         });
+
+        this.socket.on('channelDeleted', (channel_name) => {
+            store.commit('auth/CHANNEL_DELETED', channel_name)
+            store.commit('channels/CLEAR_DELETED_CHANNEL', channel_name)
+        })
     }
 
     public addMessage(message: RawMessage): Promise<SerializedMessage> {
         return this.emitAsync('addMessage', message);
+    }
+
+    public removeChannel(channel_name: string): Promise<void> {
+        console.log("yea this happens")
+        return this.emitAsync('removeChannel', channel_name)
     }
 
     public loadMessages(): Promise<SerializedMessage[]> {
@@ -27,7 +37,7 @@ class ChannelService {
 
     public join(name: string): ChannelSocketManager {
         if (this.channels.has(name)) {
-            throw new Error(`User is already joined in channel "${name}"`);
+            console.info(`User is already joined in channel "${name}"`);
         }
 
         // connect to given channel namespace

@@ -7,7 +7,7 @@ export default class Channels extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
       table.string('name').notNullable().unique()
-      table.integer('ownerId').unsigned().references('id').inTable('users').onDelete('CASCADE')
+      table.integer('owner_id').unsigned().references('id').inTable('users').onDelete('CASCADE')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

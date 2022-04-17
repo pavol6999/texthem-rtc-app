@@ -30,10 +30,10 @@ export default class Channel extends BaseModel {
   public messages: HasMany<typeof Message>
 
   @column()
-  public ownerId: number
+  public owner_id: number
 
   @belongsTo(() => User, {
-    foreignKey: 'ownerId',
+    foreignKey: 'owner_id',
   })
   public owner: BelongsTo<typeof User>
 }

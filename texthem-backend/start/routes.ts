@@ -26,3 +26,7 @@ Route.group(() => {
   Route.post('logout', 'AuthController.logout').middleware('auth')
   Route.get('me', 'AuthController.me').middleware('auth')
 }).prefix('auth')
+
+Route.post('channelJoin', 'ChannelController.join').middleware('auth')
+Route.post('channelCancel', 'ChannelController.cancel').middleware('auth')
+Route.post('channelQuit', 'ChannelController.quit').middleware('auth')

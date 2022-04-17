@@ -38,7 +38,7 @@ export default defineComponent({
     },
     computed: {
         activeChannel() {
-            return this.$store.state.channels.active
+            return this.$store.getters['channels/activeChannel']
         }
     },
     components: {
@@ -47,8 +47,17 @@ export default defineComponent({
     methods: {
         async send() {
             this.loading = true
-            //await commandService.handle(this.message)
-            await this.addMessage({ channel: this.activeChannel, message: this.message })
+            if (this.message.split('')[0] == '/') {
+                console.info('is a command')
+                await commandService.handle(this.message, this.activeChannel, this.$store)
+                // await this.$store.dispatch('auth/check')
+            } else {
+                if (this.activeChannel != null) {
+                    await this.addMessage({ channel: this.activeChannel, message: this.message })
+                } else {
+                    console.warn("no channel but sent regular message")
+                }
+            }
             this.message = ''
             this.loading = false
         },

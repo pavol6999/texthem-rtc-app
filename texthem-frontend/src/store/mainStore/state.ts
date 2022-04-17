@@ -6,8 +6,8 @@ export interface GlobalStateInterface {
 
 function state(): GlobalStateInterface {
     return {
-        leftDrawerState: true,
-        rightDrawerState: true,
+        leftDrawerState: false,
+        rightDrawerState: false,
         mobileNavbarState: false,
     };
 }

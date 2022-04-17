@@ -8,21 +8,21 @@
             </template>
 
             <div class="column col justify-end q-pa-md">
-                <div v-for="msg in curr_messages()" :key="msg.id">
-                    <div class="msg_group_right" v-if="msg.sender_is_user">
-                        <q-chat-message :name="msg.sender_name" :text="[msg.msg_text]" :stamp="msg.msg_age" sent
+                <div v-for="msg in curr_messages" :key="msg?.id" >
+                    <div class="msg_group_right" v-if="msg != null && is_mine(msg.author)">
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="msg.created_at" sent
                             text-color="white" bg-color="primary" />
 
-                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ initial(msg.sender_name) }}
+                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
                     </div>
 
-                    <div class="msg_group_left" v-else>
-                        <q-avatar class="q-mr-md" color="purple" text-color="white">{{ initial(msg.sender_name) }}
+                    <div class="msg_group_left" v-else-if="msg != null">
+                        <q-avatar class="q-mr-md" color="purple" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
 
-                        <q-chat-message :name="msg.sender_name" :text="[msg.msg_text]" :stamp="msg.msg_age"
-                            text-color="white" :bg-color="msg.mention ? 'accent' : 'purple'" />
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="msg.created_at"
+                            text-color="white" :bg-color="has_mention(msg.content) ? 'accent' : 'purple'" />
                     </div>
                 </div>
             </div>
@@ -30,35 +30,56 @@
 
         <q-page-sticky expand position="top" class="current-channel">
             <q-toolbar class="bg-white text-black">
-                <q-btn dense flat rounded icon="delete" @click="confirm = true" color="red">
-                    <span v-if="$q.screen.gt.xs">Delete Channel</span>
-                </q-btn>
-                <q-toolbar-title class="text-center">
-                    <span v-if="$q.screen.gt.xs">Active Channel -&nbsp;</span>
 
+                <!--- just for alignment lol -->
+                <q-btn  dense flat icon="delete" rounded color="white">
+                    <span v-if="$q.screen.gt.xs"> Not the owner </span>
+                </q-btn>
+
+                <q-toolbar-title class="text-center">
+                    <span v-if="$q.screen.gt.xs"> Active Channel -&nbsp;</span>
                     <span class="text-weight-bold text-primary">{{ activeChannel }}</span>
                 </q-toolbar-title>
 
-                <q-btn dense flat rounded icon-right="logout" color="secondary">
-                    <span v-if="$q.screen.gt.xs">Leave Channel&nbsp;</span>
+                <q-btn v-if="is_owner" dense flat rounded icon="delete" @click="confirm_delete = true" color="red">
+                    <span v-if="$q.screen.gt.xs"> Delete Channel </span>
+                </q-btn>
+
+                <q-btn v-else dense flat rounded icon-right="logout" @click="confirm_leave = true" color="secondary">
+                    <span v-if="$q.screen.gt.xs"> Leave Channel &nbsp;</span>
                 </q-btn>
             </q-toolbar>
         </q-page-sticky>
     </div>
 
-    <q-dialog v-model="confirm" persistent>
+    <q-dialog v-model="confirm_delete">
         <q-card>
             <q-card-section class="row items-center">
-                <q-avatar icon="folder_delete" color="primary" text-color="white" />
+                <q-avatar icon="delete" color="red" text-color="white" />
                 <span class="q-ml-sm">Do you really wish to delete this channel?</span>
             </q-card-section>
 
             <q-card-actions align="right">
                 <q-btn flat label="Cancel" color="primary" v-close-popup />
-                <q-btn flat label="Delete Channel" color="red" v-close-popup />
+                <q-btn flat label="Delete Channel" color="red" @click="button_delete" v-close-popup />
             </q-card-actions>
         </q-card>
     </q-dialog>
+
+    <q-dialog v-model="confirm_leave">
+        <q-card>
+            <q-card-section class="row items-center">
+                <q-avatar icon="logout" color="primary" text-color="white" />
+                <span class="q-ml-sm">Do you really wish to leave this channel?</span>
+            </q-card-section>
+
+            <q-card-actions align="right">
+                <q-btn flat label="Cancel" color="primary" v-close-popup />
+                <q-btn flat label="Leave Channel" color="red" @click="button_leave" v-close-popup />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
     <q-page-sticky expand position="bottom-left" style="margin-left:10px; margin-bottom:5px">
         <UserTyping></UserTyping>
     </q-page-sticky>
@@ -74,6 +95,9 @@ import UserTyping from './UserTyping.vue';
 import { Message } from './interface/models';
 import MessageSendBox from "./MessageSendBox.vue";
 import { useQuasar } from "quasar";
+import { SerializedMessage, User } from 'src/contracts';
+import commandService from '../services/CommandService'
+
 export default defineComponent({
     components: { UserTyping, MessageSendBox },
     setup() {
@@ -82,7 +106,8 @@ export default defineComponent({
 
         return {
             items,
-            confirm: ref(false),
+            confirm_delete: ref(false),
+            confirm_leave: ref(false),
             onLoad(index: any, done: any) {
                 setTimeout(() => {
                     $q.notify({
@@ -104,60 +129,40 @@ export default defineComponent({
     },
     computed: {
         activeChannel(): string {
-            return this.$store.state.channels.active || 'no channel'
+            return this.$store.getters['channels/activeChannel']
+        },
+        curr_messages(): SerializedMessage[] {
+            return this.$store.getters['channels/currentMessages']
+        },
+        curr_user(): User {
+            return this.$store.getters['auth/currUser']
+        },
+        is_owner(): boolean {
+            for (let i = 0; i < this.curr_user.channels.length; i++) {
+                if (this.curr_user.channels[i].name === this.activeChannel)
+                    if (this.curr_user.channels[i].owner_id === this.curr_user.id)
+                        return true
+            }
+            return false
         }
     },
     methods: {
         initial(name: string): string {
             return name.toUpperCase().split('')[0]
         },
-        curr_messages(): Message[] {
-            let curr_msgs: Message[] = []
-            switch (this.activeChannel) {
-                case ('Public1'):
-                    curr_msgs = this.messages1
-                    break;
-                case ('Public2'):
-                    curr_msgs = this.messages2
-                    break;
-                case ('Private1'):
-                    curr_msgs = this.messages3
-                    break;
-                default:
-                    break;
-            }
-            return curr_msgs
+        is_mine(author: User): boolean {
+            return (author.id == this.curr_user.id)
+        },
+        has_mention(msg: string) : boolean {
+            return msg.includes(this.curr_user.nickname)
+        },
+        async button_delete() {
+            await commandService.handle('/quit', this.activeChannel, this.$store)
+        },
+        async button_leave() {
+            await commandService.handle('/cancel', this.activeChannel, this.$store)
         }
     },
-    data() {
-        const messages1: Message[] = [
-            { id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'This message includes a mention @messie', mention: true },
-            { id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'doin fine, hbu?', mention: false },
-            { id: 3, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'I just feel like typing a really, really, REALLY long message to annoy you...', mention: false },
-            { id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'Did it work?', mention: false }
-        ]
-
-        const messages2: Message[] = [
-            { id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg2 ja', mention: false },
-            { id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'This message includes a mention @messie', mention: true },
-            { id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'mgs 2 I just feel like typing a really, really, REALLY long message to annoy you...', mention: false },
-            { id: 4, sender_name: "Jane", sender_is_user: false, msg_age: '1 minute ago', msg_text: 'msg2 Did it work?', mention: false }
-        ]
-
-        const messages3: Message[] = [
-            { id: 1, sender_name: "me", sender_is_user: true, msg_age: '7 minutes ago', msg_text: 'msg 3 Hey, how are you?', mention: false },
-            { id: 2, sender_name: "Jane", sender_is_user: false, msg_age: '4 minutes ago', msg_text: 'This message includes a mention @messie', mention: true },
-            { id: 3, sender_name: "me", sender_is_user: true, msg_age: '4 minutes ago', msg_text: 'msg3 I just feel like typing a really, really, REALLY long message to annoy you...', mention: false },
-            { id: 4, sender_name: "me", sender_is_user: true, msg_age: '1 minute ago', msg_text: 'msg3 Did it work?', mention: false }
-        ]
-
-        return {
-            messages1,
-            messages2,
-            messages3
-        }
-    }
-
 })
 </script>
 

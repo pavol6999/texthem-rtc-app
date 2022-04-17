@@ -52,7 +52,7 @@ export default defineComponent({
     },
     computed: {
         username(): string {            
-            return this.$store.state.auth.user?.nickname || 'no name?'
+            return this.$store.getters['auth/currUser'].nickname|| 'no name?'
         },
         initial(): string {
             return this.username.toUpperCase().split('')[0]

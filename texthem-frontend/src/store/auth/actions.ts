@@ -13,7 +13,7 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
 
             if (user?.id !== state.user?.id) {
                 // just logged in
-                await dispatch('channels/join', 'general', { root: true });
+                // await dispatch('channels/join', 'general', { root: true });
             }
             commit('AUTH_SUCCESS', user);
 

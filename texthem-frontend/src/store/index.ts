@@ -49,9 +49,11 @@ declare module '@vue/runtime-core' {
 export const storeKey: InjectionKey<VuexStore<StateInterface>> =
     Symbol('vuex-key');
 
+/*
 const vuexLocal = new VuexPersistence<StateInterface>({
     storage: window.localStorage,
 });
+*/
 
 export default store(function (/* { ssrContext } */) {
     const Store = createStore<StateInterface>({
@@ -66,7 +68,9 @@ export default store(function (/* { ssrContext } */) {
         // enable strict mode (adds overhead!)
         // for dev mode and --debug builds only
         strict: !!process.env.DEBUGGING,
-        plugins: [vuexLocal.plugin],
+        plugins: [
+            // vuexLocal.plugin
+        ],
     });
 
     return Store;

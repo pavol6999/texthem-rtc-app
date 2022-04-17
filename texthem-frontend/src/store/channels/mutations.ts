@@ -25,8 +25,16 @@ const mutation: MutationTree<ChannelsStateInterface> = {
         state.active = null;
         delete state.messages[channel];
     },
+    CLEAR_DELETED_CHANNEL(state, channel) {
+        if (state.active == channel) {
+            console.log("current channel was removed")
+            state.active = null
+            delete state.messages[channel]
+        } else {
+            console.log("some other channel was removed")
+        }
+    },
     SET_ACTIVE(state, channel: string) {
-        console.log("it happened")
         state.active = channel;
     },
     NEW_MESSAGE(

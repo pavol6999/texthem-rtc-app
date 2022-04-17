@@ -21,16 +21,18 @@
         <q-separator />
 
         <q-expansion-item v-if="public_list.length !== 0" label="Public channels" icon="public" class="q-mb-sm">
-            <q-item v-for="item in public_list" :active="activeChannel === item.name" :key="item.name" clickable v-ripple
-                @click="() => switch_channel(item.name)" active-class="sel_item">
-                <q-item-section avatar>
-                    <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
-                </q-item-section>
+            <q-scroll-area style="height: 30vh">
+                <q-item v-for="item in public_list" :active="activeChannel === item.name" :key="item.name" clickable v-ripple
+                    @click="() => switch_channel(item.name)" active-class="sel_item">
+                    <q-item-section avatar>
+                        <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
+                    </q-item-section>
 
-                <q-item-section>
-                    <q-item-label>{{ item.name }}</q-item-label>
-                </q-item-section>
-            </q-item>
+                    <q-item-section>
+                        <q-item-label>{{ item.name }}</q-item-label>
+                    </q-item-section>
+                </q-item>
+            </q-scroll-area>
         </q-expansion-item>
 
         <q-separator />
@@ -50,10 +52,10 @@
         </q-expansion-item>
 
         <q-separator />
-        <div style="
-    display: flex;
-    justify-content: center;
-">
+        <div v-if="false" style="
+            display: flex;
+            justify-content: center;
+        ">
             <q-btn dense rounded icon="add" flat color="blue" style="margin-top:15px">Create a new channel</q-btn>
         </div>
     </q-drawer>
@@ -69,19 +71,18 @@ export default defineComponent({
 
     name: "ChannelDrawer",
     data() {
+        /*
         const channels: Channel[] = [
-
-
-            { name: "Public1", type: "public" },
+            { name: "general", type: "public" },
             { name: "Private1", type: "private" },
             { name: "Public2", type: "public" },
             { name: "Inv1", type: "invitation" }
         ]
+        */
         const invitations: Invitation[] = [
             { channel_name: "Inv1" }
         ]
         return {
-            channels,
             invitations,
             collapse_open: false,
             message: '',
@@ -89,7 +90,9 @@ export default defineComponent({
         }
     },
     computed: {
-
+        channels() {
+            return this.$store.getters['auth/currUser'].channels
+        },
         leftSideDrawer: {
             get() {
                 return this.$store.state.mainStore.leftDrawerState
@@ -108,12 +111,12 @@ export default defineComponent({
         invitation_list(): Invitation[] {
             return this.invitations
         },
-        ...mapGetters('channels', {
-            channels: 'joinedChannels',
+        ...mapGetters('channels2', {
+            // channels: 'joinedChannels',
             lastMessageOf: 'lastMessageOf'
         }),
         activeChannel() {
-            return this.$store.state.channels.active
+            return this.$store.getters['channels/activeChannel']
         }
     },
     methods: {
@@ -121,10 +124,7 @@ export default defineComponent({
             return name.toUpperCase().split('')[0]
         },
         async send() {
-            this.loading = true
-            await this.addMessage({ channel: this.activeChannel, message: this.message })
-            this.message = ''
-            this.loading = false
+            // unused lol
         },
         ...mapMutations('channels', {
             setActiveChannel: 'SET_ACTIVE'
@@ -134,6 +134,8 @@ export default defineComponent({
 
         switch_channel(dest: string) {
             this.setActiveChannel(dest)
+            if (!this.$store.getters['channels/joinedChannels'].includes(dest))
+                this.$store.dispatch('channels/join', dest, { root: true });
         }
     }
 });

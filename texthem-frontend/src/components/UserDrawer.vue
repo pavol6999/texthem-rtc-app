@@ -142,7 +142,7 @@ export default defineComponent({
             return this.curr_users().filter(e => e.online === false)
         },
         activeChannel() {
-            return this.$store.state.channels.active
+            return this.$store.getters['channels/activeChannel']
         },
     },
     methods: {
