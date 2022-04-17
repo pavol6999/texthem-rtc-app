@@ -26,7 +26,8 @@ class CommandManager {
             let res = await api.post('channelCancel', { name: channel_name })
             if (res.status == 200) {
                 console.log(res.data.left_channel)
-                store.commit('auth/LEFT_CHANNEL', res.data.left_channel)
+                await store.commit('auth/LEFT_CHANNEL', res.data.left_channel)
+                await store.dispatch('channels/leave', channel_name, { root: true });
                 if (channel_name && res.data.was_removed)
                     await channelService.in(channel_name)?.removeChannel(channel_name);
                 store.commit('channels/CLEAR_CHANNEL', channel_name)
@@ -42,7 +43,8 @@ class CommandManager {
             let res = await api.post('channelQuit', { name: channel_name })
             if (res.status == 200) {
                 console.log(res.data.left_channel)
-                store.commit('auth/LEFT_CHANNEL', res.data.left_channel)
+                await store.commit('auth/LEFT_CHANNEL', res.data.left_channel)
+                await store.dispatch('channels/leave', null, { root: true });
                 if (channel_name && res.data.was_removed)
                     await channelService.in(channel_name)?.removeChannel(channel_name)
                 store.commit('channels/CLEAR_CHANNEL', channel_name)
