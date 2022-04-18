@@ -49,7 +49,23 @@ export default defineComponent({
             this.loading = true
             if (this.message.split('')[0] == '/') {
                 console.info('is a command')
-                await commandService.handle(this.message, this.activeChannel, this.$store)
+                let res = await commandService.handle(this.message, this.activeChannel, this.$store)
+                if (res != null) {
+                    let msg = "List of users: "
+                    for (let i = 0; i < res.length; i++) {
+                        msg += ('\t' + res[i])
+                    }
+                    this.$store.commit('channels/NEW_MESSAGE', 
+                        {
+                            channel: this.activeChannel, 
+                            message: {
+                                author: {
+                                    nickname: 'console'
+                                },
+                                content: msg
+                            }
+                        })
+                }
                 // await this.$store.dispatch('auth/check')
             } else {
                 if (this.activeChannel != null) {

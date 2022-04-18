@@ -22,7 +22,7 @@ export default boot(({ router, store }) => {
     authManager.onLogout(() => {
         router.push(loginRoute(router.currentRoute.value));
     });
-
+    
     // add route guard to check auth user
     router.beforeEach(async (to) => {
         const isAuthenticated = await store.dispatch('auth/check');

@@ -9,9 +9,13 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     async check({ state, commit, dispatch }) {
         try {
             commit('AUTH_START');
-            const user = await authService.me();
+            let res = await authService.me();
+            const user = res.user
+            user.invitations = res.invitations
+            user.channels = res.real_channels
 
             if (user?.id !== state.user?.id) {
+                console.log("idk")
                 // just logged in
                 // await dispatch('channels/join', 'general', { root: true });
             }
@@ -60,6 +64,24 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
             throw err;
         }
     },
+    async inv_acc( {state, commit}, ch_name: string ) {
+        if (state.user) {
+            for (let i = 0; i < state.user.invitations.length; i++) {
+                if (state.user.invitations[i].name === ch_name) {
+                    commit('ACC_INV', state.user.invitations[i])
+                }
+            }
+        }
+    },
+    async inv_dec( {state, commit}, ch_name: string) {
+        if (state.user) {
+            for (let i = 0; i < state.user.invitations.length; i++) {
+                if (state.user.invitations[i].name === ch_name) {
+                    commit('DEC_INV', state.user.invitations[i])
+                }
+            }
+        }
+    }
 };
 
 export default actions;

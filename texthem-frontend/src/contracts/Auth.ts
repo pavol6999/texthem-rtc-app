@@ -27,4 +27,5 @@ export interface User {
     updated_at: string;
     notifications?: boolean
     channels: any[]
+    invitations: any[]
 }

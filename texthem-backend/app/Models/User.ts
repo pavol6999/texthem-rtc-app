@@ -43,9 +43,12 @@ export default class User extends BaseModel {
     pivotTable: 'channel_users',
     pivotForeignKey: 'user_id',
     pivotRelatedForeignKey: 'channel_id',
-    pivotTimestamps: true,
+    pivotTimestamps: true,    
+    pivotColumns: ['inviter_id', 'accepted', 'message_read_at']
   })
   public channels: ManyToMany<typeof Channel>
+  invs: Channel[]
+  real_channels: Channel[]
 
   @beforeSave()
   public static async hashPassword(user: User) {

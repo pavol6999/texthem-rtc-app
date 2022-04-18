@@ -40,6 +40,31 @@ const mutation: MutationTree<AuthStateInterface> = {
                return e.id != ch.id
             })
         }
+    },
+    ACC_INV(state, new_ch) {
+        console.log("mutation acc inv:")
+        console.log(new_ch)     
+        let clone = []
+        if (state.user) {
+            for (let i = 0; i < state.user?.invitations.length; i++) {
+                if (state.user.invitations[i].name != new_ch.name)
+                    clone.push(state.user.invitations[i])
+            }
+            state.user.invitations = clone
+        }
+        state.user?.channels.push(new_ch)
+    },
+    DEC_INV(state, new_ch) {
+        console.log("mutation dec inv:")
+        console.log(new_ch)     
+        let clone = []
+        if (state.user) {
+            for (let i = 0; i < state.user?.invitations.length; i++) {
+                if (state.user.invitations[i].name != new_ch.name)
+                    clone.push(state.user.invitations[i])
+            }
+            state.user.invitations = clone
+        }
     }
 };
 

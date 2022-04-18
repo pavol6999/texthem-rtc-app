@@ -8,7 +8,7 @@ import type {
 import { api } from 'src/boot/axios';
 
 class AuthService {
-    async me(dontTriggerLogout = false): Promise<User | null> {
+    async me(dontTriggerLogout = false): Promise<any> {
         return api
             .get('auth/me', { dontTriggerLogout } as AxiosRequestConfig)
             .then((response) => response.data)

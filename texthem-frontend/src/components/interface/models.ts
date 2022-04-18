@@ -10,10 +10,6 @@ export interface Channel {
     // members: Member[];
 }
 
-export interface Invitation {
-    channel_name: string;
-}
-
 export interface Message {
     id: number;
     mention: boolean;

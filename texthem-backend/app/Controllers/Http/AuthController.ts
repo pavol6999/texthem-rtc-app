@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 // import Channel from 'App/Models/Channel'
 import User from 'App/Models/User'
 import RegisterUserValidator from 'App/Validators/RegisterUserValidator'
+import Channel from 'App/Models/Channel'
 
 export default class AuthController {
   async register({ request }: HttpContextContract) {
@@ -30,6 +31,24 @@ export default class AuthController {
 
   async me({ auth }: HttpContextContract) {
     await auth.user!.load('channels')
-    return auth.user
+    let channels = auth.user?.channels
+    let invitations: Channel[] = []
+    let channels_real: Channel[] = []
+
+    if (channels != null) {
+      for (let i = 0; i < channels.length; i++) {
+        if (channels[i].$extras.pivot_accepted) {
+          channels_real.push(channels[i])
+        } else {
+          invitations.push(channels[i])
+        }
+      }
+    }
+    
+    return {
+      user: auth.user,
+      real_channels: channels_real,
+      invitations: invitations
+    }
   }
 }

@@ -3,7 +3,7 @@ import { channelService } from 'src/services';
 
 class CommandManager {
     // create a channel or join a public one
-    async join(command: string, store: any): Promise<void> {
+    async join(command: string, channel: string | null, store: any): Promise<void> {
         let args = command.split(' ')
         let channel_name: string
         let make_private = false
@@ -38,28 +38,43 @@ class CommandManager {
     }
     // delete this channel (creator only)
     async quit(command: string, channel: string | null, store: any): Promise<void> {
-        let channel_name = channel
         if (channel != null) {            
-            let res = await api.post('channelQuit', { name: channel_name })
+            let res = await api.post('channelQuit', { name: channel })
             if (res.status == 200) {
                 console.log(res.data.left_channel)
                 await store.commit('auth/LEFT_CHANNEL', res.data.left_channel)
                 await store.dispatch('channels/leave', null, { root: true });
-                if (channel_name && res.data.was_removed)
-                    await channelService.in(channel_name)?.removeChannel(channel_name)
-                store.commit('channels/CLEAR_CHANNEL', channel_name)
+                if (channel && res.data.was_removed)
+                    await channelService.in(channel)?.removeChannel(channel)
+                store.commit('channels/CLEAR_CHANNEL', channel)
             } else {
                 console.log(res.status)
                 console.log("insufficient auth probably")
             }
         } else {
-            console.log("not in a channel rn or something else went wrong")
+            console.log("not in a channel rn")
         }
     }
 
-    // invite someone to a private channel
-    invite(params: any): never {
-        throw new Error('Method not implemented.');
+    // list users of the channel
+    async list(command: string, channel: string | null, store: any): Promise<String[]> {
+        if (channel != null) {
+            let res = await api.get('channelList/' + channel)
+            return res.data.user_list
+        } else {
+            console.log("not in a channel rn")
+            return []
+        }
+    }
+    // invite someone to a channel
+    async invite(command: string, channel: string | null, store: any): Promise<void> {
+        let args = command.split(' ')
+        if (channel != null && args.length >= 2) {
+            let user = args[1]
+            let res = await api.post('channelInvite', { name: channel, username: user })
+        } else {
+            console.log("no channel or invalid format")
+        }
     }
     // remove someone from a private channel
     revoke(params: any): never {
@@ -69,22 +84,24 @@ class CommandManager {
     kick(params: any): never {
         throw new Error('Method not implemented.');
     }
-    // list users of the channel
-    list(params: any): never {
-        throw new Error('Method not implemented.');
-    }
+
 
     // main
-    handle(command: string, channel: string | null, store: any) {
+    handle(command: string, channel: string | null, store: any): any {
         switch(command.split(' ')[0]) {
             case '/join':
-                this.join(command, store)
+                this.join(command, channel, store)
                 break
             case '/cancel':
                 this.cancel(command, channel, store)
                 break
             case '/quit':
                 this.quit(command, channel, store)
+                break
+            case '/list':
+                return this.list(command, channel, store)
+            case '/invite':
+                this.invite(command, channel, store)
             default:
                 break
         }

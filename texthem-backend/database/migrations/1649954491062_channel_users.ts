@@ -32,7 +32,7 @@ export default class ChannelUsers extends BaseSchema {
         .references('id')
         .inTable('users')
         .onDelete('CASCADE')
-      table.timestamp('accepted_at', { useTz: true }).nullable()
+      table.boolean('accepted').nullable()
       table.timestamp('message_read_at', { useTz: true }).nullable()
 
       table.timestamp('created_at', { useTz: true })

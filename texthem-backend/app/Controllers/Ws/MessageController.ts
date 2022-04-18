@@ -24,7 +24,7 @@ export default class MessageController {
     return message
   }
 
-  public async deleteChannel( {params, socket, auth} : WsContextContract, channel_name: string ) {
+  public async deleteChannel( {socket} : WsContextContract, channel_name: string ) {
     socket.broadcast.emit('channelDeleted', channel_name)
   }
 }

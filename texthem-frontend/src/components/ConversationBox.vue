@@ -154,7 +154,7 @@ export default defineComponent({
             return (author.id == this.curr_user.id)
         },
         has_mention(msg: string) : boolean {
-            return msg.includes(this.curr_user.nickname)
+            return msg.includes('@' + this.curr_user.nickname)
         },
         async button_delete() {
             await commandService.handle('/quit', this.activeChannel, this.$store)

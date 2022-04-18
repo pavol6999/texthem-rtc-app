@@ -24,6 +24,14 @@ Ws.namespace('/')
 // this is dynamic namespace, in controller methods we can use params.name
 Ws.namespace('channels/:name')
   // .middleware('channel') // check if user can join given channel
+  /*
+  .connected(({ socket, params }) => {
+    console.log(socket.id, "someone connected to", params.name)
+  })
+  .disconnected( ({ socket, params }) => {
+    console.log(socket.id, "someone disconnected from", params.name)
+  })
+  */
   .on('loadMessages', 'MessageController.loadMessages')
   .on('addMessage', 'MessageController.addMessage')
   .on('removeChannel', 'MessageController.deleteChannel')

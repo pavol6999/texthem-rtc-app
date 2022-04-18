@@ -3,18 +3,18 @@
         <div class="text-h4 row justify-center" style="margin-top:15px">Channels</div>
         <q-expansion-item v-if="invitation_list.length !== 0" label="Invitations" header-class="text-yellow"
             icon="mail">
-            <q-item v-for="item in invitation_list" :active="activeChannel === item.channel_name" :key="item.channel_name"
+            <q-item v-for="item in invitation_list" :key="item.name"
                 active-class="sel_item">
                 <q-item-section avatar>
-                    <q-avatar color="primary">{{ initial(item.channel_name) }}</q-avatar>
+                    <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
                 </q-item-section>
 
                 <q-item-section>
-                    <q-item-label>{{ item.channel_name }}</q-item-label>
+                    <q-item-label>{{ item.name }}</q-item-label>
                 </q-item-section>
 
-                <q-btn round size="sm" class="inv_btn" color="green" icon="check" />
-                <q-btn round size="sm" class="inv_btn" color="red" icon="close" />
+                <q-btn round size="sm" class="inv_btn" color="green" icon="check" @click="inv_accept(item.name)" />
+                <q-btn round size="sm" class="inv_btn" color="red" icon="close" @click="inv_decline(item.name)" />
             </q-item>
         </q-expansion-item>
 
@@ -64,34 +64,19 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
-
-import { Channel, Invitation } from './interface/models';
+import { channelService } from 'src/services';
+import { Channel } from './interface/models';
+import { api } from "src/boot/axios";
 
 export default defineComponent({
 
     name: "ChannelDrawer",
-    data() {
-        /*
-        const channels: Channel[] = [
-            { name: "general", type: "public" },
-            { name: "Private1", type: "private" },
-            { name: "Public2", type: "public" },
-            { name: "Inv1", type: "invitation" }
-        ]
-        */
-        const invitations: Invitation[] = [
-            { channel_name: "Inv1" }
-        ]
-        return {
-            invitations,
-            collapse_open: false,
-            message: '',
-            loading: false
-        }
-    },
     computed: {
         channels() {
             return this.$store.getters['auth/currUser'].channels
+        },
+        invitations() {
+            return this.$store.getters['auth/currUser'].invitations
         },
         leftSideDrawer: {
             get() {
@@ -108,7 +93,7 @@ export default defineComponent({
         private_list(): Channel[] {
             return this.channels.filter((e: { type: string; }) => e.type === "private")
         },
-        invitation_list(): Invitation[] {
+        invitation_list(): Channel[] {
             return this.invitations
         },
         ...mapGetters('channels2', {
@@ -116,15 +101,25 @@ export default defineComponent({
             lastMessageOf: 'lastMessageOf'
         }),
         activeChannel() {
-            return this.$store.getters['channels/activeChannel']
+            let ch = this.$store.getters['channels/activeChannel']
+            return ch
         }
     },
     methods: {
+        async inv_accept(ch_name: string) {
+            let res = await api.post('inviteAccept', {name: ch_name})
+            if (res.status == 200) {
+                this.$store.dispatch('auth/inv_acc', ch_name)
+            }
+        },
+        async inv_decline(ch_name: string) {
+            let res = await api.post('inviteDecline', {name: ch_name})
+            if (res.status == 200) {
+                this.$store.dispatch('auth/inv_dec', ch_name)
+            }
+        },
         initial(name: string): string {
             return name.toUpperCase().split('')[0]
-        },
-        async send() {
-            // unused lol
         },
         ...mapMutations('channels', {
             setActiveChannel: 'SET_ACTIVE'
@@ -138,6 +133,7 @@ export default defineComponent({
                 this.$store.dispatch('channels/join', dest, { root: true });
         }
     }
+    
 });
 </script>
 

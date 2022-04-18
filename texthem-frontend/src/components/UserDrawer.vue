@@ -1,7 +1,7 @@
 <template>
     <q-drawer v-model="rightSideDrawer" side="right" elevated>
         <div class="row justify-center">
-            <q-btn color="primary" @click="toggle_random">
+            <q-btn v-show="false" color="primary" @click="toggle_random">
                 Shuffle offline/online users
                 <q-tooltip
                     class="bg-accent"

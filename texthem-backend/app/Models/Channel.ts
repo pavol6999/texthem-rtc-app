@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, belongsTo, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column, HasMany, hasMany, ManyToMany, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import Message from 'App/Models/Message'
 import User from 'App/Models/User'
 
@@ -36,4 +36,13 @@ export default class Channel extends BaseModel {
     foreignKey: 'owner_id',
   })
   public owner: BelongsTo<typeof User>
+
+  @manyToMany(() => User, {
+    pivotTable: 'channel_users',
+    pivotForeignKey: 'channel_id',
+    pivotRelatedForeignKey: 'user_id',
+    pivotTimestamps: true,
+    pivotColumns: ['inviter_id', 'accepted', 'message_read_at']
+  })
+  public users: ManyToMany<typeof User>
 }
