@@ -69,7 +69,7 @@ class CommandManager {
     // invite someone to a channel
     async invite(command: string, channel: string | null, store: any): Promise<void> {
         let args = command.split(' ')
-        if (channel != null && args.length >= 2) {
+        if (channel != null && args.length == 2) {
             let user = args[1]
             let res = await api.post('channelInvite', { name: channel, username: user })
         } else {
@@ -77,12 +77,24 @@ class CommandManager {
         }
     }
     // remove someone from a private channel
-    revoke(params: any): never {
-        throw new Error('Method not implemented.');
+    async revoke(command: string, channel: string | null, store: any): Promise<void> {
+        let args = command.split(' ')
+        if (channel != null && args.length == 2) {
+            let user = args[1]
+            let res = await api.post('channelRevoke', { name: channel, username: user })
+        } else {
+            console.log("no channel or invalid format")
+        }
     }
     // kick someone from a public channel
-    kick(params: any): never {
-        throw new Error('Method not implemented.');
+    async kick(command: string, channel: string | null, store: any): Promise<void> {
+        let args = command.split(' ')
+        if (channel != null && args.length == 2) {
+            let user = args[1]
+            let res = await api.post('channelKick', { name: channel, username: user })
+        } else {
+            console.log("no channel or invalid format")
+        }
     }
 
 
@@ -102,6 +114,13 @@ class CommandManager {
                 return this.list(command, channel, store)
             case '/invite':
                 this.invite(command, channel, store)
+                break
+            case '/revoke':
+                this.revoke(command, channel, store)
+                break
+            case '/kick':
+                this.kick(command, channel, store)
+                break
             default:
                 break
         }

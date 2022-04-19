@@ -32,6 +32,8 @@ Route.post('channelCancel', 'ChannelController.cancel').middleware('auth')
 Route.post('channelQuit', 'ChannelController.quit').middleware('auth')
 Route.get('channelList/:name', 'ChannelController.list').middleware('auth')
 Route.post('channelInvite', 'ChannelController.invite').middleware('auth')
+Route.post('channelRevoke', 'ChannelController.revoke').middleware('auth')
+Route.post('channelKick', 'ChannelController.kick').middleware('auth')
 
 Route.post('inviteAccept', 'ChannelController.inviteAccept').middleware('auth')
 Route.post('inviteDecline', 'ChannelController.inviteDecline').middleware('auth')

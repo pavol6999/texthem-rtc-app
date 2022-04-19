@@ -173,6 +173,77 @@ export default class ChannelController {
                     response.send('insufficient auth')
                 }
             }
+        } else {
+            response.status(403)
+            response.send("something went wrong")
+        }
+    }
+
+    async revoke( {request, auth, response }: HttpContextContract) {
+        let channel_name = request.body().name
+        let username = request.body().username
+        let already_there = false
+
+        let channel = await Channel.query().where('name', channel_name).preload('users').first()
+        let user = await User.query().where('nickname', username).preload('channels').first()
+        let channel_users = channel?.users
+        if (channel != null && user != null) {
+            if (channel_users != null) {
+                for (let i = 0; i < channel_users.length; i++)
+                    if (channel.users[i].nickname === username)
+                        already_there = true
+            }
+
+            if (!already_there) {
+                response.status(403)
+                response.send('user isnt in the channel')
+            } else {
+                if (channel.type === ChannelType.PRIVATE && channel.owner_id == auth.user?.id) {
+                    await user?.related('channels').detach([channel.id]);
+                    response.status(200)
+                    response.send("user revoked from private channel")
+                } else {
+                    response.status(403)
+                    response.send("is a public channel or not an owner")
+                }
+            }
+        } else {
+            response.status(403)
+            response.send("something went wrong")
+        }
+    }
+
+    async kick ( { request, auth, response}: HttpContextContract ) {
+        let channel_name = request.body().name
+        let username = request.body().username
+        let already_there = false
+
+        let channel = await Channel.query().where('name', channel_name).preload('users').first()
+        let user = await User.query().where('nickname', username).preload('channels').first()
+        let channel_users = channel?.users
+        if (channel != null && user != null) {
+            if (channel_users != null) {
+                for (let i = 0; i < channel_users.length; i++)
+                    if (channel.users[i].nickname === username)
+                        already_there = true
+            }
+
+            if (!already_there) {
+                response.status(403)
+                response.send('user isnt in the channel')
+            } else {
+                if (channel.type === ChannelType.PUBLIC && user.id != auth.user?.id && user.id != channel.owner_id) {
+                    await user?.related('channels').detach([channel.id]);
+                    response.status(200)
+                    response.send("user kicked from public channel")
+                } else {
+                    response.status(403)
+                    response.send("is a private channel, trying to kick yourself or owner")
+                }
+            }
+        } else {
+            response.status(403)
+            response.send("something went wrong")
         }
     }
 
