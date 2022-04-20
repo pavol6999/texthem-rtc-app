@@ -58,7 +58,7 @@ class CommandManager {
 
     // list users of the channel
     async list(command: string, channel: string | null, store: any): Promise<String[]> {
-        if (channel != null) {
+        if (channel != '' && channel != null) {
             let res = await api.get('channelList/' + channel)
             return res.data.user_list
         } else {
@@ -111,7 +111,10 @@ class CommandManager {
                 this.quit(command, channel, store)
                 break
             case '/list':
-                return this.list(command, channel, store)
+                if (channel)
+                    return this.list(command, channel, store)
+                else 
+                    return null
             case '/invite':
                 this.invite(command, channel, store)
                 break

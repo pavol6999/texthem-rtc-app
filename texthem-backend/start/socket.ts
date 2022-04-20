@@ -10,8 +10,9 @@
 import Ws from '@ioc:Ruby184/Socket.IO/Ws'
 
 Ws.namespace('/')
-  .connected(({ socket }) => {
+  .connected(({ socket, auth }) => {
     console.log('new websocket connection: ', socket.id)
+    socket.broadcast.emit("userConnected", auth.user?.nickname)
   })
   .disconnected(({ socket }, reason) => {
     console.log('websocket disconnecting: ', socket.id, reason)

@@ -19,7 +19,8 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
 
                 if (user?.id !== state.user?.id) {
                     console.log("idk")
-                    // just logged in
+                    // just logged in?
+                    await dispatch('channels/joinblanknamespace', null, { root: true })
                     // await dispatch('channels/join', 'general', { root: true });
                 }
                 commit('AUTH_SUCCESS', user);            

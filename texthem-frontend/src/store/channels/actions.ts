@@ -15,6 +15,9 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
             throw err;
         }
     },
+    async joinblanknamespace( {commit} ) {
+        await channelService.joinblanknamespace()
+    },
     async leave({ getters, commit }, channel: string | null) {
         const leaving: string[] =
             channel !== null ? [channel] : getters.joinedChannels;

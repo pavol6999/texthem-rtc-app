@@ -34,6 +34,7 @@ class ChannelSocketManager extends SocketManager {
 
 class ChannelService {
     private channels: Map<string, ChannelSocketManager> = new Map();
+    private slash_connection: Map<string, ChannelSocketManager> = new Map()
 
     public join(name: string): ChannelSocketManager {
         if (this.channels.has(name)) {
@@ -44,6 +45,11 @@ class ChannelService {
         const channel = new ChannelSocketManager(`/channels/${name}`);
         this.channels.set(name, channel);
         return channel;
+    }
+
+    public joinblanknamespace(): void {
+        const tmp = new ChannelSocketManager('/')
+        this.slash_connection.set('/', tmp)
     }
 
     public leave(name: string): boolean {
