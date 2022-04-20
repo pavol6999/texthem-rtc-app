@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Channel from 'App/Models/Channel'
 import User from 'App/Models/User'
 import { ChannelType } from 'App/Models/Channel'
+import Kick from 'App/Models/Kick'
 
 export default class ChannelController {
     async join({ request, auth, response} : HttpContextContract) {
@@ -37,17 +38,39 @@ export default class ChannelController {
             response.status(200)
             response.send({ new_channel: new_ch[0] })
         } else {
-            if (channel.type === "public") {
+            if (channel.type === "public" && user != null) {
                 let q = await user?.related('channels').query().where("name", channel_name).first()
                 if (q?.name == undefined) {
-                    await user?.related('channels').attach([channel.id]);
-                    await user?.related('channels').pivotQuery().where('channel_id', channel.id).where('user_id', user.id).update({
-                        accepted: true,
-                        inviter_id: user.id
-                    })
+                    // ban check
+                    let can_join = false
+                    let res = await Kick.query().where('kicked_id', user.id).where('channel_id', channel.id)
+                    let kicked_by_owner = false
+                    if (res.length < 3) {
+                        for (let i = 0; i < res.length; i++) {
+                            if (res[i].kicker_id === channel.owner_id) {
+                                kicked_by_owner = true
+                            }
+                        }
 
-                    response.status(200)
-                    response.send( { new_channel: channel })
+                        if (!kicked_by_owner) {
+                            can_join = true
+                        }
+                    }
+
+                    // isnt banned
+                    if (can_join) {
+                        await user?.related('channels').attach([channel.id]);
+                        await user?.related('channels').pivotQuery().where('channel_id', channel.id).where('user_id', user.id).update({
+                            accepted: true,
+                            inviter_id: user.id
+                        })
+
+                        response.status(200)
+                        response.send( { new_channel: channel })
+                    } else {
+                        response.status(403)
+                        response.send("user is banned, cannot join")
+                    }                     
                 } else {
                     response.status(403)
                     response.send("already a member of that channel")
@@ -159,7 +182,30 @@ export default class ChannelController {
                 response.status(403)
                 response.send('user already in the channel')
             } else {
-                if (channel.type === ChannelType.PUBLIC || channel.owner_id == auth.user?.id) {
+                // ban check
+                let can_be_invited = false
+
+                if (channel.owner_id === auth.user?.id) {
+                    can_be_invited = true;
+                    await Kick.query().where('kicked_id', user.id).where('channel_id', channel.id).delete()                    
+                } else if (channel.type === ChannelType.PUBLIC) {
+                    let res = await Kick.query().where('kicked_id', user.id).where('channel_id', channel.id)
+                    let kicked_by_owner = false
+                    if (res.length < 3) {
+                        for (let i = 0; i < res.length; i++) {
+                            if (res[i].kicker_id === channel.owner_id) {
+                                kicked_by_owner = true
+                            }
+                        }
+
+                        if (!kicked_by_owner) {
+                            can_be_invited = true
+                        }
+                    }
+                }
+
+                // isnt banned
+                if (can_be_invited) {
                     await user?.related('channels').attach([channel.id]);
                     await user?.related('channels').pivotQuery().where('channel_id', channel.id).where('user_id', user.id).update({
                         accepted: false,
@@ -170,7 +216,7 @@ export default class ChannelController {
                     response.send('user invited')
                 } else {
                     response.status(403)
-                    response.send('insufficient auth')
+                    response.send('user has been banned, cannot be invited')
                 }
             }
         } else {
@@ -221,7 +267,7 @@ export default class ChannelController {
         let channel = await Channel.query().where('name', channel_name).preload('users').first()
         let user = await User.query().where('nickname', username).preload('channels').first()
         let channel_users = channel?.users
-        if (channel != null && user != null) {
+        if (channel != null && user != null && auth.user != null) {
             if (channel_users != null) {
                 for (let i = 0; i < channel_users.length; i++)
                     if (channel.users[i].nickname === username)
@@ -234,6 +280,16 @@ export default class ChannelController {
             } else {
                 if (channel.type === ChannelType.PUBLIC && user.id != auth.user?.id && user.id != channel.owner_id) {
                     await user?.related('channels').detach([channel.id]);
+                    await Kick.updateOrCreate({
+                        kicker_id: auth.user.id,
+                        kicked_id: user.id,
+                        channel_id: channel.id
+                    }, {
+                        kicker_id: auth.user.id,
+                        kicked_id: user.id,
+                        channel_id: channel.id
+                    })
+
                     response.status(200)
                     response.send("user kicked from public channel")
                 } else {

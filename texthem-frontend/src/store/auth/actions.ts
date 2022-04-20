@@ -9,19 +9,22 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     async check({ state, commit, dispatch }) {
         try {
             commit('AUTH_START');
-            let res = await authService.me();
-            const user = res.user
-            user.invitations = res.invitations
-            user.channels = res.real_channels
+            let res = await authService.me()
+            if (res === null) {
+                commit('AUTH_ERROR', null)
+            } else {
+                const user = res.user
+                user.invitations = res.invitations
+                user.channels = res.real_channels
 
-            if (user?.id !== state.user?.id) {
-                console.log("idk")
-                // just logged in
-                // await dispatch('channels/join', 'general', { root: true });
+                if (user?.id !== state.user?.id) {
+                    console.log("idk")
+                    // just logged in
+                    // await dispatch('channels/join', 'general', { root: true });
+                }
+                commit('AUTH_SUCCESS', user);            
+                return user !== null;
             }
-            commit('AUTH_SUCCESS', user);
-
-            return user !== null;
         } catch (err) {
             commit('AUTH_ERROR', err);
             throw err;
