@@ -3,27 +3,26 @@ import { StateInterface } from '../index';
 import { AuthStateInterface } from './state';
 import { authService, authManager } from 'src/services';
 import { LoginCredentials, RegisterData } from 'src/contracts';
-import { QPullToRefresh } from 'quasar';
 
 const actions: ActionTree<AuthStateInterface, StateInterface> = {
     async check({ state, commit, dispatch }) {
         try {
             commit('AUTH_START');
-            let res = await authService.me()
+            let res = await authService.me();
             if (res === null) {
-                commit('AUTH_ERROR', null)
+                commit('AUTH_ERROR', null);
             } else {
-                const user = res.user
-                user.invitations = res.invitations
-                user.channels = res.real_channels
+                const user = res.user;
+                user.invitations = res.invitations;
+                user.channels = res.real_channels;
 
                 if (user?.id !== state.user?.id) {
-                    console.log("idk")
+                    console.log('idk');
                     // just logged in?
-                    await dispatch('channels/joinblanknamespace', null, { root: true })
+                    // await dispatch('channels/joinblanknamespace', null, { root: true })
                     // await dispatch('channels/join', 'general', { root: true });
                 }
-                commit('AUTH_SUCCESS', user);            
+                commit('AUTH_SUCCESS', user);
                 return user !== null;
             }
         } catch (err) {
@@ -68,24 +67,24 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
             throw err;
         }
     },
-    async inv_acc( {state, commit}, ch_name: string ) {
+    async inv_acc({ state, commit }, ch_name: string) {
         if (state.user) {
             for (let i = 0; i < state.user.invitations.length; i++) {
                 if (state.user.invitations[i].name === ch_name) {
-                    commit('ACC_INV', state.user.invitations[i])
+                    commit('ACC_INV', state.user.invitations[i]);
                 }
             }
         }
     },
-    async inv_dec( {state, commit}, ch_name: string) {
+    async inv_dec({ state, commit }, ch_name: string) {
         if (state.user) {
             for (let i = 0; i < state.user.invitations.length; i++) {
                 if (state.user.invitations[i].name === ch_name) {
-                    commit('DEC_INV', state.user.invitations[i])
+                    commit('DEC_INV', state.user.invitations[i]);
                 }
             }
         }
-    }
+    },
 };
 
 export default actions;

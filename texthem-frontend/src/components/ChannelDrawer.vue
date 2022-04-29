@@ -3,8 +3,7 @@
         <div class="text-h4 row justify-center" style="margin-top:15px">Channels</div>
         <q-expansion-item v-if="invitation_list.length !== 0" label="Invitations" header-class="text-yellow"
             icon="mail">
-            <q-item v-for="item in invitation_list" :key="item.name"
-                active-class="sel_item">
+            <q-item v-for="item in invitation_list" :key="item.name" active-class="sel_item">
                 <q-item-section avatar>
                     <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
                 </q-item-section>
@@ -22,8 +21,8 @@
 
         <q-expansion-item v-if="public_list.length !== 0" label="Public channels" icon="public" class="q-mb-sm">
             <q-scroll-area style="height: 30vh">
-                <q-item v-for="item in public_list" :active="activeChannel === item.name" :key="item.name" clickable v-ripple
-                    @click="() => switch_channel(item.name)" active-class="sel_item">
+                <q-item v-for="item in public_list" :active="activeChannel === item.name" :key="item.name" clickable
+                    v-ripple @click="() => switch_channel(item.name)" active-class="sel_item">
                     <q-item-section avatar>
                         <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
                     </q-item-section>
@@ -38,8 +37,8 @@
         <q-separator />
 
         <q-expansion-item v-if="private_list.length !== 0" label="Private channels" icon="unlocked" class="q-mb-sm">
-            <q-item v-for="item in private_list" :active="activeChannel === item.name" :key="item.name" clickable v-ripple
-                @click="() => switch_channel(item.name)" active-class="sel_item">
+            <q-item v-for="item in private_list" :active="activeChannel === item.name" :key="item.name" clickable
+                v-ripple @click="() => switch_channel(item.name)" active-class="sel_item">
                 <q-item-section avatar>
                     <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
                 </q-item-section>
@@ -107,13 +106,13 @@ export default defineComponent({
     },
     methods: {
         async inv_accept(ch_name: string) {
-            let res = await api.post('inviteAccept', {name: ch_name})
+            let res = await api.post('inviteAccept', { name: ch_name })
             if (res.status == 200) {
                 this.$store.dispatch('auth/inv_acc', ch_name)
             }
         },
         async inv_decline(ch_name: string) {
-            let res = await api.post('inviteDecline', {name: ch_name})
+            let res = await api.post('inviteDecline', { name: ch_name })
             if (res.status == 200) {
                 this.$store.dispatch('auth/inv_dec', ch_name)
             }
@@ -131,9 +130,10 @@ export default defineComponent({
             this.setActiveChannel(dest)
             if (!this.$store.getters['channels/joinedChannels'].includes(dest))
                 this.$store.dispatch('channels/join', dest, { root: true });
+            this.$store.dispatch('activity/list', dest, { root: true });
         }
     }
-    
+
 });
 </script>
 

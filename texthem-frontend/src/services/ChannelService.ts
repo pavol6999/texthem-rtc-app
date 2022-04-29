@@ -13,9 +13,9 @@ class ChannelSocketManager extends SocketManager {
         });
 
         this.socket.on('channelDeleted', (channel_name) => {
-            store.commit('auth/CHANNEL_DELETED', channel_name)
-            store.commit('channels/CLEAR_DELETED_CHANNEL', channel_name)
-        })
+            store.commit('auth/CHANNEL_DELETED', channel_name);
+            store.commit('channels/CLEAR_DELETED_CHANNEL', channel_name);
+        });
     }
 
     public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -23,8 +23,8 @@ class ChannelSocketManager extends SocketManager {
     }
 
     public removeChannel(channel_name: string): Promise<void> {
-        console.log("yea this happens")
-        return this.emitAsync('removeChannel', channel_name)
+        console.log('yea this happens');
+        return this.emitAsync('removeChannel', channel_name);
     }
 
     public loadMessages(): Promise<SerializedMessage[]> {
@@ -34,7 +34,7 @@ class ChannelSocketManager extends SocketManager {
 
 class ChannelService {
     private channels: Map<string, ChannelSocketManager> = new Map();
-    private slash_connection: Map<string, ChannelSocketManager> = new Map()
+    private slash_connection: Map<string, ChannelSocketManager> = new Map();
 
     public join(name: string): ChannelSocketManager {
         if (this.channels.has(name)) {
@@ -47,10 +47,10 @@ class ChannelService {
         return channel;
     }
 
-    public joinblanknamespace(): void {
-        const tmp = new ChannelSocketManager('/')
-        this.slash_connection.set('/', tmp)
-    }
+    // public joinblanknamespace(): void {
+    //     const tmp = new ChannelSocketManager('/');
+    //     this.slash_connection.set('/', tmp);
+    // }
 
     public leave(name: string): boolean {
         const channel = this.channels.get(name);
