@@ -7,7 +7,9 @@ import {
     useStore as vuexUseStore,
 } from 'vuex';
 import mainStore from './mainStore';
+
 import { GlobalStateInterface } from './mainStore/state';
+import { ActivityInterface } from './activity/state';
 // import { UserStateInterface } from './userStore/state';
 // import UserStore from './userStore';
 import VuexPersistence from 'vuex-persist';
@@ -15,6 +17,7 @@ import VuexPersistence from 'vuex-persist';
 import auth from './auth';
 import type { AuthStateInterface } from './auth/state';
 import { ChannelsStateInterface } from './channels/state';
+import activity from './activity';
 
 // import example from './module-example'
 // import { ExampleStateInterface } from './module-example/state';
@@ -36,6 +39,7 @@ export interface StateInterface {
     mainStore: GlobalStateInterface;
     // UserStore: UserStateInterface;
     channels: ChannelsStateInterface;
+    activity: ActivityInterface;
 }
 
 // provide typings for `this.$store`
@@ -63,6 +67,7 @@ export default store(function (/* { ssrContext } */) {
             // UserStore,
             auth,
             channels,
+            activity,
         },
 
         // enable strict mode (adds overhead!)

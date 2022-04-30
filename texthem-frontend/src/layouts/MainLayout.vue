@@ -3,7 +3,7 @@
         <Navbar></Navbar>
         <ChannelDrawer></ChannelDrawer>
         <UserDrawer></UserDrawer>
-        <q-footer elevated class="bg-primary">
+        <q-footer class="transparent">
             <MessageSendBox></MessageSendBox>
         </q-footer>
         <q-page-container>
