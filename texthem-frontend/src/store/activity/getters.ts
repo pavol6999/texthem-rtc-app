@@ -3,11 +3,11 @@ import { StateInterface } from '../index';
 import { ActivityInterface } from './state';
 
 const getters: GetterTree<ActivityInterface, StateInterface> = {
-    listUsers(context) {
-        return context.active !== null ? context.users[context.active] : [];
+    onlineUsers(context) {
+        return context.users !== null ? context.users : [];
     },
-    activeChannel(context) {
-        return context.active;
+    pendingInvitations(context) {
+        return context.invitations !== null ? context.invitations : [];
     },
 };
 

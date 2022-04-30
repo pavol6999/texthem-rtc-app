@@ -1,41 +1,60 @@
+import { Channel } from 'src/components/interface/models';
 import { User } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { ActivityInterface } from './state';
 
 const mutation: MutationTree<ActivityInterface> = {
-    LOADING_START(state) {
-        state.loading = true;
-        state.error = null;
+    USER_CONNECTED(state, user: User) {
+        state.users.push(user);
     },
-    LOADING_SUCCESS(
-        state,
-        { channel, users }: { channel: string; users: User[] }
-    ) {
-        state.loading = false;
-        state.users[channel] = users;
+
+    USER_DISCONNECTED(state, user: User) {
+        state.users = state.users.filter((u) => u.id != user.id);
     },
-    LOADING_ERROR(state, error) {
-        state.loading = false;
-        state.error = error;
+    ONLINE_USERS_LIST(state, users: User[]) {
+        state.users = users;
     },
-    CLEAR_CHANNEL(state, channel) {
-        state.active = null;
-        delete state.users[channel];
+
+    INVITATIONS_LIST(state, invitations: Channel[]) {
+        state.invitations = invitations;
     },
-    CLEAR_DELETED_CHANNEL(state, channel) {
-        if (state.active == channel) {
-            console.log('current channel was removed');
-            state.active = null;
-            delete state.users[channel];
-        } else {
-            console.log('some other channel was removed');
+
+    INVITE_START(state) {
+        state.status = 'pending';
+        state.errors = [];
+    },
+    INVITE_SUCCESS(state) {
+        state.status = 'success';
+        state.errors = [];
+    },
+    INVITE_ERROR(state, errors) {
+        state.status = 'error';
+        state.errors = errors;
+    },
+
+    ACC_INV(state, payload) {
+        console.log('mutation acc inv:');
+        console.log(payload);
+        let clone = [];
+
+        for (let i = 0; i < state.invitations.length; i++) {
+            if (state.invitations[i].name != payload.invite.name)
+                clone.push(state.invitations[i]);
         }
+        state.invitations = clone;
+        payload.root.auth.user!.channels.push(payload.invite);
+        // state.user?.channels.push(new_ch)
     },
-    SET_ACTIVE(state, channel: string) {
-        state.active = channel;
-    },
-    NEW_USER(state, { channel, user }: { channel: string; user: User }) {
-        state.users[channel].push(user);
+    DEC_INV(state, new_ch) {
+        console.log('mutation dec inv:');
+        console.log(new_ch);
+        let clone = [];
+
+        for (let i = 0; i < state.invitations.length; i++) {
+            if (state.invitations[i].name != new_ch.name)
+                clone.push(state.invitations[i]);
+        }
+        state.invitations = clone;
     },
 };
 

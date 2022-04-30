@@ -1,18 +1,19 @@
+import { Channel } from 'src/components/interface/models';
 import { User } from 'src/contracts';
 
 export interface ActivityInterface {
-    loading: boolean;
-    error: Error | null;
-    users: { [channel: string]: User[] };
-    active: string | null;
+    users: User[];
+    invitations: any[];
+    status: 'pending' | 'success' | 'error' | '';
+    errors: { message: string; field?: string }[];
 }
 
 function state(): ActivityInterface {
     return {
-        loading: false,
-        error: null,
-        users: {},
-        active: null,
+        users: [],
+        invitations: [],
+        status: '',
+        errors: [],
     };
 }
 

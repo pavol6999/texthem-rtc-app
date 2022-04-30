@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
 import { authManager } from 'src/services';
-
+import { Notify } from 'quasar';
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {
         $axios: AxiosInstance;
@@ -57,6 +57,15 @@ api.interceptors.response.use(
     (error) => {
         if (DEBUG) {
             console.error('<- ', error.response);
+        }
+        if (typeof error.response?.data == 'string') {
+            Notify.create({
+                message: error.response.data,
+                color: 'negative',
+                icon: 'error',
+                timeout: 2000,
+                position: 'top',
+            });
         }
 
         // server api request returned unathorized response so we trrigger logout

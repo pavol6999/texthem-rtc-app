@@ -32,23 +32,21 @@ export default class AuthController {
   async me({ auth }: HttpContextContract) {
     await auth.user!.load('channels')
     let channels = auth.user?.channels
-    let invitations: Channel[] = []
+
     let channels_real: Channel[] = []
 
+    // let invites = channels.filter((channel) => channel.$extras.pivot_accepted)
     if (channels != null) {
       for (let i = 0; i < channels.length; i++) {
         if (channels[i].$extras.pivot_accepted) {
           channels_real.push(channels[i])
-        } else {
-          invitations.push(channels[i])
         }
       }
     }
-    
+
     return {
       user: auth.user,
       real_channels: channels_real,
-      invitations: invitations
     }
   }
 }

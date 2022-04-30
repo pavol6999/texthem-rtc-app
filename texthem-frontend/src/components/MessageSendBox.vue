@@ -68,6 +68,7 @@ export default defineComponent({
             if (this.message.split('')[0] == '/') {
                 console.info('is a command')
                 let res = await commandService.handle(this.message, this.activeChannel, this.$store)
+
                 if (res != null) {
                     let msg = "List of users: "
                     for (let i = 0; i < res.length; i++) {

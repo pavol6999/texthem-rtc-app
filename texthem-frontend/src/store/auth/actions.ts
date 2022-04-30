@@ -13,7 +13,7 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
                 commit('AUTH_ERROR', null);
             } else {
                 const user = res.user;
-                user.invitations = res.invitations;
+
                 user.channels = res.real_channels;
 
                 if (user?.id !== state.user?.id) {
@@ -65,24 +65,6 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
         } catch (err) {
             commit('AUTH_ERROR', err);
             throw err;
-        }
-    },
-    async inv_acc({ state, commit }, ch_name: string) {
-        if (state.user) {
-            for (let i = 0; i < state.user.invitations.length; i++) {
-                if (state.user.invitations[i].name === ch_name) {
-                    commit('ACC_INV', state.user.invitations[i]);
-                }
-            }
-        }
-    },
-    async inv_dec({ state, commit }, ch_name: string) {
-        if (state.user) {
-            for (let i = 0; i < state.user.invitations.length; i++) {
-                if (state.user.invitations[i].name === ch_name) {
-                    commit('DEC_INV', state.user.invitations[i]);
-                }
-            }
         }
     },
 };

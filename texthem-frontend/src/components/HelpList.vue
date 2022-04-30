@@ -1,7 +1,7 @@
 <template>
     <div v-show="message.startsWith('/')"
         v-bind:style="$q.screen.lt.sm ? { 'margin-left': '0%' } : { 'margin-left': '15%' }" style="width:500px;"
-        class="row">
+        class="row ">
         <TransitionGroup name="list">
             <q-list>
                 <TransitionGroup name="list">

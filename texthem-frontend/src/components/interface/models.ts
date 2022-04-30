@@ -6,8 +6,8 @@ export interface Member {
 export interface Channel {
     name: string;
     type: string;
-    // owner: Member;
-    // members: Member[];
+    ownerId: number;
+    id: number;
 }
 
 export interface Message {

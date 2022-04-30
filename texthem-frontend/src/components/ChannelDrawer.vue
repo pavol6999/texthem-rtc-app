@@ -75,7 +75,7 @@ export default defineComponent({
             return this.$store.getters['auth/currUser'].channels
         },
         invitations() {
-            return this.$store.getters['auth/currUser'].invitations
+            return this.$store.getters['activity/pendingInvitations']
         },
         leftSideDrawer: {
             get() {
@@ -108,13 +108,13 @@ export default defineComponent({
         async inv_accept(ch_name: string) {
             let res = await api.post('inviteAccept', { name: ch_name })
             if (res.status == 200) {
-                this.$store.dispatch('auth/inv_acc', ch_name)
+                this.$store.dispatch('activity/inv_acc', ch_name)
             }
         },
         async inv_decline(ch_name: string) {
             let res = await api.post('inviteDecline', { name: ch_name })
             if (res.status == 200) {
-                this.$store.dispatch('auth/inv_dec', ch_name)
+                this.$store.dispatch('activity/inv_dec', ch_name)
             }
         },
         initial(name: string): string {
@@ -130,7 +130,7 @@ export default defineComponent({
             this.setActiveChannel(dest)
             if (!this.$store.getters['channels/joinedChannels'].includes(dest))
                 this.$store.dispatch('channels/join', dest, { root: true });
-            this.$store.dispatch('activity/list', dest, { root: true });
+
         }
     }
 
