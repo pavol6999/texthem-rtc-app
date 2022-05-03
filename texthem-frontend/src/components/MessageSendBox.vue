@@ -88,7 +88,8 @@ export default defineComponent({
                 // await this.$store.dispatch('auth/check')
             } else {
                 if (this.activeChannel != null) {
-                    await this.addMessage({ channel: this.activeChannel, message: this.message })
+                    if (this.message.trim().length > 0)
+                        await this.addMessage({ channel: this.activeChannel, message: this.message })
                 } else {
                     console.warn("no channel but sent regular message")
                 }
