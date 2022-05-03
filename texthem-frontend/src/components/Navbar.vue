@@ -19,7 +19,7 @@
                 </div>
             </q-toolbar-title>
 
-            <q-item dense v-if="!disabled" rounded clickable flat icon-right="group"
+            <q-item dense v-if="!disabled && activeChannel != null" rounded clickable flat icon-right="group"
                 @click="rightSideDrawer = !rightSideDrawer">
                 <q-item-section avatar>
                     <q-icon right rounded name="group" />
@@ -70,6 +70,9 @@ export default defineComponent({
                 this.$store.commit('mainStore/toggleLeftDrawer', val)
             },
         },
+        ...mapGetters('channels', {
+            activeChannel: 'activeChannel',
+        }),
         /*
         ...mapGetters('UserStore', {
             isLoggedIn: 'isLoggedIn'

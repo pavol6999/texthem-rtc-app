@@ -109,6 +109,7 @@ export default defineComponent({
             let res = await api.post('inviteAccept', { name: ch_name })
             if (res.status == 200) {
                 this.$store.dispatch('activity/inv_acc', ch_name)
+
             }
         },
         async inv_decline(ch_name: string) {

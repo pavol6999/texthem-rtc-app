@@ -3,13 +3,16 @@ import { StateInterface } from '../index';
 import { ChannelsStateInterface } from './state';
 import { channelService } from 'src/services';
 import { RawMessage } from 'src/contracts';
+import { api } from 'src/boot/axios';
 
 const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
     async join({ commit }, channel: string) {
         try {
             commit('LOADING_START');
             const messages = await channelService.join(channel).loadMessages();
-            commit('LOADING_SUCCESS', { channel, messages });
+            let users = (await api.get('listUsers/' + channel)).data.items;
+            console.log('users`', users);
+            commit('LOADING_SUCCESS', { channel, messages, users });
         } catch (err) {
             commit('LOADING_ERROR', err);
             throw err;
