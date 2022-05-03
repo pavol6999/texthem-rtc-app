@@ -5,6 +5,9 @@ import { BootParams, SocketManager } from './SocketManager';
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
 // you have access to socket.io socket using this.socket
 class ChannelSocketManager extends SocketManager {
+    loadUsers() {
+        throw new Error('Method not implemented.');
+    }
     public subscribe({ store }: BootParams): void {
         const channel = this.namespace.split('/').pop() as string;
 
@@ -40,7 +43,7 @@ class ChannelService {
         if (this.channels.has(name)) {
             console.info(`User is already joined in channel "${name}"`);
         }
-
+        console.log('joined');
         // connect to given channel namespace
         const channel = new ChannelSocketManager(`/channels/${name}`);
         this.channels.set(name, channel);

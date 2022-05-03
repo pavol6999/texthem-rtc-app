@@ -1,4 +1,4 @@
-import { SerializedMessage } from 'src/contracts';
+import { SerializedMessage, User } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { ChannelsStateInterface } from './state';
 
@@ -12,10 +12,12 @@ const mutation: MutationTree<ChannelsStateInterface> = {
         {
             channel,
             messages,
-        }: { channel: string; messages: SerializedMessage[] }
+            users,
+        }: { channel: string; messages: SerializedMessage[]; users: User[] }
     ) {
         state.loading = false;
         state.messages[channel] = messages;
+        state.users[channel] = users;
     },
     LOADING_ERROR(state, error) {
         state.loading = false;
@@ -24,14 +26,16 @@ const mutation: MutationTree<ChannelsStateInterface> = {
     CLEAR_CHANNEL(state, channel) {
         state.active = null;
         delete state.messages[channel];
+        delete state.users[channel];
     },
     CLEAR_DELETED_CHANNEL(state, channel) {
         if (state.active == channel) {
-            console.log("current channel was removed")
-            state.active = null
-            delete state.messages[channel]
+            console.log('current channel was removed');
+            state.active = null;
+            delete state.messages[channel];
+            delete state.users[channel];
         } else {
-            console.log("some other channel was removed")
+            console.log('some other channel was removed');
         }
     },
     SET_ACTIVE(state, channel: string) {

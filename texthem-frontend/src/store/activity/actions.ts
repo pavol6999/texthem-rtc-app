@@ -3,7 +3,7 @@ import { toRaw } from 'vue';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ActivityInterface } from './state';
-import { activityService } from 'src/services';
+import { activityService, channelService } from 'src/services';
 const actions: ActionTree<ActivityInterface, StateInterface> = {
     async invite({ state, commit }, { channel, user }) {
         try {
@@ -42,7 +42,11 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
                         root: rootState,
                     };
                     commit('ACC_INV', payload);
-
+                    commit(
+                        'channels/NEW_USER',
+                        { user: rootState.auth.user, channel_name: ch_name },
+                        { root: true }
+                    );
                     // rootState.auth.user.channels.push(state.invitations[i]);
                 }
             }

@@ -1,14 +1,10 @@
 <template>
     <div>
-        <q-infinite-scroll @load="onLoad" reverse>
-            <template v-slot:loading>
-                <div class="row justify-center q-my-md">
-                    <q-spinner color="primary" name="dots" size="40px" />
-                </div>
-            </template>
+        <q-scroll-area reverse ref='area' style="width: 100%; height: calc(100vh - 150px); ">
+
 
             <div class="column col justify-end q-pa-md">
-                <div v-for="msg in curr_messages" :key="msg?.id" >
+                <div v-for="msg in curr_messages" :key="msg?.id">
                     <div class="msg_group_right" v-if="msg != null && is_mine(msg.author)">
                         <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="msg.created_at" sent
                             text-color="white" bg-color="primary" />
@@ -16,6 +12,7 @@
                         <q-avatar class="q-ml-md" color="primary" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
                     </div>
+
 
                     <div class="msg_group_left" v-else-if="msg != null">
                         <q-avatar class="q-mr-md" color="purple" text-color="white">{{ initial(msg.author.nickname) }}
@@ -26,13 +23,13 @@
                     </div>
                 </div>
             </div>
-        </q-infinite-scroll>
+        </q-scroll-area>
 
         <q-page-sticky expand position="top" class="current-channel">
             <q-toolbar class="bg-white text-black">
 
                 <!--- just for alignment lol -->
-                <q-btn  dense flat icon="delete" rounded color="white">
+                <q-btn dense flat icon="delete" rounded color="white">
                     <span v-if="$q.screen.gt.xs"> Not the owner </span>
                 </q-btn>
 
@@ -80,8 +77,13 @@
         </q-card>
     </q-dialog>
 
-    <q-page-sticky expand position="bottom-left" style="margin-left:10px; margin-bottom:5px">
-        <UserTyping></UserTyping>
+    <q-page-sticky expand position="bottom-left" style="margin-left: 50%; margin-bottom: 20px;">
+
+        <q-btn round size="md" color="secondary" @click="scrollMessages()" icon="arrow_downward">
+            <q-tooltip class="bg-accent">Scroll to bottom</q-tooltip>
+        </q-btn>
+
+
     </q-page-sticky>
 </template>
 <style scoped>
@@ -94,32 +96,21 @@ import { defineComponent, ref } from "vue";
 import UserTyping from './UserTyping.vue';
 import { Message } from './interface/models';
 import MessageSendBox from "./MessageSendBox.vue";
-import { useQuasar } from "quasar";
+import { QScrollArea, useQuasar } from "quasar";
 import { SerializedMessage, User } from 'src/contracts';
 import commandService from '../services/CommandService'
 
 export default defineComponent({
     components: { UserTyping, MessageSendBox },
     setup() {
-        const items = ref([{}, {}, {}, {}, {}, {}, {}])
-        const $q = useQuasar()
+
 
         return {
-            items,
+
             confirm_delete: ref(false),
             confirm_leave: ref(false),
-            onLoad(index: any, done: any) {
-                setTimeout(() => {
-                    $q.notify({
-                        position: 'top',
-                        message: 'Jane wrote a message',
-                        color: 'accent',
-
-                    })
 
 
-                }, 2000)
-            }
         }
     },
     props: {
@@ -137,6 +128,7 @@ export default defineComponent({
         curr_user(): User {
             return this.$store.getters['auth/currUser']
         },
+
         is_owner(): boolean {
             for (let i = 0; i < this.curr_user.channels.length; i++) {
                 if (this.curr_user.channels[i].name === this.activeChannel)
@@ -144,6 +136,16 @@ export default defineComponent({
                         return true
             }
             return false
+        },
+
+
+    },
+    watch: {
+        curr_messages: {
+            handler() {
+                this.$nextTick(() => this.scrollMessages())
+            },
+            deep: true
         }
     },
     methods: {
@@ -153,9 +155,18 @@ export default defineComponent({
         is_mine(author: User): boolean {
             return (author.id == this.curr_user.id)
         },
-        has_mention(msg: string) : boolean {
+        has_mention(msg: string): boolean {
             return msg.includes('@' + this.curr_user.nickname)
         },
+
+        scrollMessages() {
+            const area = this.$refs.area as QScrollArea
+            console.log(area)
+            area && area.setScrollPercentage('vertical', 1.1)
+        },
+
+
+
         async button_delete() {
             await commandService.handle('/quit', this.activeChannel, this.$store)
         },
@@ -177,5 +188,9 @@ export default defineComponent({
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
+}
+
+.scroll {
+    overflow: auto !important;
 }
 </style>

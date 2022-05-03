@@ -9,6 +9,9 @@ const getters: GetterTree<ChannelsStateInterface, StateInterface> = {
     currentMessages(context) {
         return context.active !== null ? context.messages[context.active] : [];
     },
+    currentUsers(context) {
+        return context.active !== null ? context.users[context.active] : [];
+    },
     lastMessageOf(context) {
         return (channel: string) => {
             const messages = context.messages[channel];
@@ -16,11 +19,11 @@ const getters: GetterTree<ChannelsStateInterface, StateInterface> = {
         };
     },
     debug_all(context) {
-        return context
+        return context;
     },
     activeChannel(context) {
-        return context.active
-    }
+        return context.active;
+    },
 };
 
 export default getters;
