@@ -31,7 +31,7 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
         }
     },
 
-    async inv_acc({ state, commit, rootState }, ch_name: string) {
+    async inv_acc({ state, commit, rootState, dispatch }, ch_name: string) {
         let clone = [];
         console.log('channel sttring', ch_name);
         if (rootState.auth.user) {
@@ -47,6 +47,7 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
                         { user: rootState.auth.user, channel_name: ch_name },
                         { root: true }
                     );
+                    dispatch('channels/join', ch_name, { root: true})
                     // rootState.auth.user.channels.push(state.invitations[i]);
                 }
             }

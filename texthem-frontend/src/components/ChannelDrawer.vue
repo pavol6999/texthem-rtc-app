@@ -129,8 +129,8 @@ export default defineComponent({
 
         switch_channel(dest: string) {
             this.setActiveChannel(dest)
-            if (!this.$store.getters['channels/joinedChannels'].includes(dest))
-                this.$store.dispatch('channels/join', dest, { root: true });
+            //if (!this.$store.getters['channels/joinedChannels'].includes(dest))
+            //  this.$store.dispatch('channels/join', dest, { root: true });
 
         }
     }
