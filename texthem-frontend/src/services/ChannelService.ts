@@ -1,5 +1,6 @@
 import { RawMessage, SerializedMessage } from '../contracts';
 import { BootParams, SocketManager } from './SocketManager';
+import { Notify } from 'quasar';
 
 // creating instance of this class automatically connects to given socket.io namespace
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
@@ -8,21 +9,77 @@ class ChannelSocketManager extends SocketManager {
     loadUsers() {
         throw new Error('Method not implemented.');
     }
+
+    format_notify(message: SerializedMessage, channel: string): string {
+        const maxlen = 25
+        let content = message.content
+        if (message.content.length > maxlen)
+            content = content.slice(0, maxlen) + '...'
+
+        return `${message.author!.nickname} (in channel ${channel}) sent: ${content}`
+    }
+
     public subscribe({ store }: BootParams): void {
         const channel = this.namespace.split('/').pop() as string;
 
         this.socket.on('message', (message: SerializedMessage) => {
             store.commit('channels/NEW_MESSAGE', { channel, message });
+
+            // todo check whether user should receive notifs
+            let notifs_on = store.state.auth.user?.notifications
+
+            if (notifs_on) {
+                let formatted_notif = this.format_notify(message, channel)
+                Notify.create({
+                    timeout: 5000,
+                    closeBtn: 'X',
+                    position: 'top',
+                    color: 'orange',
+                    message: formatted_notif
+                });
+
+                if (!("Notification" in window)) {
+                    alert("This browser does not support desktop notification");
+                }
+                
+                // Let's check whether notification permissions have already been granted
+                else if (Notification.permission === "granted") {
+                    // If it's okay let's create a notification
+                    var notification = new Notification(`New message in ${channel}`, {
+                        body: formatted_notif
+                    });
+                }
+                
+                // Otherwise, we need to ask the user for permission
+                else if (Notification.permission !== "denied") {
+                    Notification.requestPermission().then(function (permission) {
+                    // If the user accepts, let's create a notification
+                    if (permission === "granted") {
+                        var notification = new Notification(`New message in ${channel}`, {
+                            body: formatted_notif,
+                        });
+                    }
+                    });
+                }
+            }
         });
 
         this.socket.on('channelDeleted', (channel_name) => {
             store.commit('auth/CHANNEL_DELETED', channel_name);
             store.commit('channels/CLEAR_DELETED_CHANNEL', channel_name);
         });
+
+        this.socket.on('someoneTyping', ({channel, user, message } : {channel: string, user: string, message: string } ) => {
+            store.commit('channels/TYPING', { channel, user, message })
+        })
     }
 
     public addMessage(message: RawMessage): Promise<SerializedMessage> {
         return this.emitAsync('addMessage', message);
+    }
+
+    public addTyping(channel: string, user: string, message: string) {
+        this.emitAsync('someoneTyping', channel, user, message )
     }
 
     public removeChannel(channel_name: string): Promise<void> {

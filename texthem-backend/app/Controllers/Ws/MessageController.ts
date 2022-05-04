@@ -31,4 +31,8 @@ export default class MessageController {
   public async deleteChannel({ socket }: WsContextContract, channel_name: string) {
     socket.broadcast.emit('channelDeleted', channel_name)
   }
+
+  public async someoneTyping({socket}: WsContextContract, channel: string, user: string, message: string) {
+    socket.broadcast.emit('someoneTyping', {channel, user, message})
+  }
 }

@@ -7,26 +7,28 @@
                 <div v-for="msg in curr_messages" :key="msg?.id">
                     <div class="msg_group_right" v-if="msg != null && is_mine(msg.author)">
                         <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)" sent
-                            text-color="white" bg-color="primary">
+                            text-color="white" :bg-color="get_color(msg.author.nickname)">
                         </q-chat-message>
 
-                        <q-avatar class="q-ml-md" color="primary" text-color="white">{{ initial(msg.author.nickname) }}
+                        <q-avatar class="q-ml-md" :color="get_color(msg.author.nickname)" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
-
-                        <q-tooltip anchor="center right" self="top right">
+                
+                        <q-tooltip anchor="center right" self="top right" v-if="false">
                             {{ real_date(msg.created_at) }}
                         </q-tooltip>
                     </div>
 
 
                     <div class="msg_group_left" v-else-if="msg != null">
-                        <q-avatar class="q-mr-md" color="purple" text-color="white">{{ initial(msg.author.nickname) }}
+                        <q-avatar class="q-mr-md" :color="get_color(msg.author.nickname)" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
 
                         <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)"
-                            text-color="white" :bg-color="has_mention(msg.content) ? 'accent' : 'purple'" />
+                            text-color="white" :bg-color="has_mention(msg.content) ? 'accent' : get_color(msg.author.nickname)" 
+                            :class="has_mention(msg.content) ? 'bold_msg' : ''"
+                        />
 
-                        <q-tooltip anchor="center left" self="top left">
+                        <q-tooltip anchor="center left" self="top left" v-if="false">
                             {{ real_date(msg.created_at) }}
                         </q-tooltip>
                     </div>
@@ -86,14 +88,10 @@
         </q-card>
     </q-dialog>
 
-    <q-page-sticky expand position="bottom-left" style="margin-left: 50%; margin-bottom: 20px;">
-
+    <q-page-sticky position="bottom" style="margin-bottom: 10px;">
         <q-btn v-show="bottom" round size="md" color="secondary" @click="scrollMessages()" icon="arrow_downward">
             <q-tooltip class="bg-accent">Scroll to bottom</q-tooltip>
         </q-btn>
-
-
-
     </q-page-sticky>
 </template>
 <style scoped>
@@ -161,9 +159,7 @@ export default defineComponent({
         }
     },
     methods: {
-
         async scrollHandler(ctx: any) {
-
             if (ctx.verticalPercentage == 0) {
                 this.bottom = true
                 if (this.curr_messages != undefined && this.curr_messages.length > 0) {
@@ -172,24 +168,37 @@ export default defineComponent({
 
                     await this.$store.dispatch('channels/loadNewMessages', { channel: this.activeChannel, timestamp: timestamp })
                 }
-
-
-
             }
             if (ctx.verticalPercentage > 0.95 || ctx.verticalPosition == 0) {
-
                 this.bottom = false
             }
             else {
                 this.bottom = true
             }
-
+        },
+        get_color(name: string): string {
+            let sum = 0
+            name.split('').forEach(element => {
+                sum = element.charCodeAt(0)*element.charCodeAt(0) + 27 + sum
+            });            
+            switch(sum % 6) {
+                case 0: return 'green'
+                case 1: return 'red'
+                case 2: return 'purple'
+                case 3: return 'grey'
+                case 4: return 'blue'
+                case 5: return 'brown'
+            }
+            return 'purple'
         },
         real_date(stamp: string): string {
             let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
             return date.formatDate(sent_at, 'DD.MM.YYYY HH:mm')
         },
         nice_stamp(stamp: string): string {
+            if (stamp.length == 0)
+                return ''
+
             let now = new Date()
             let tmp: string
             let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
@@ -242,15 +251,11 @@ export default defineComponent({
         has_mention(msg: string): boolean {
             return msg.includes('@' + this.curr_user.nickname)
         },
-
         scrollMessages() {
             const area = this.$refs.area as QScrollArea
 
             area && area.setScrollPercentage('vertical', 1.1)
         },
-
-
-
         async button_delete() {
             await commandService.handle('/quit', this.activeChannel, this.$store)
         },
@@ -276,5 +281,8 @@ export default defineComponent({
 
 .scroll {
     overflow: auto !important;
+}
+.bold_msg {
+    font-weight: bold
 }
 </style>

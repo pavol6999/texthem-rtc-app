@@ -11,6 +11,9 @@ export default class AuthController {
     const data = await request.validate(RegisterUserValidator)
 
     const user = await User.create(data)
+    user.notifications = false
+    user.save()
+    
     // join user to general channel
     // const general = await Channel.findByOrFail('name', 'general')
     // await user.related('channels').attach([general.id])

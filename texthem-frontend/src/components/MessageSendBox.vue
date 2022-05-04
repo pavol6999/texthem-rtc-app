@@ -7,18 +7,13 @@
             v-bind:style="$q.screen.lt.md ? { 'width': '100%' } : { 'width': '80%' }" :disable="loading"
             @keydown.enter.prevent="send">
 
-
             <template v-slot:before>
                 <UserProfile size="3.5rem"></UserProfile>
-
             </template>
 
             <template v-slot:append>
-
                 <q-icon v-if="message !== ''" name="close" @click="message = ''" class="cursor-pointer" />
             </template>
-
-
 
             <template v-slot:after>
                 <q-btn :disable="loading" @click="send" round flat icon="send" />
@@ -60,6 +55,16 @@ export default defineComponent({
     watch: {
         showCommands(command) {
             console.log(command)
+        },
+        
+        message(val) {
+            if (this.activeChannel != null) {
+                this.$store.dispatch('channels/someoneTyping', {
+                    channel: this.activeChannel,
+                    message: val,
+                    user: this.$store.getters['auth/currUser'].nickname
+                })
+            }            
         }
     },
     methods: {
@@ -81,7 +86,8 @@ export default defineComponent({
                                 author: {
                                     nickname: 'console'
                                 },
-                                content: msg
+                                content: msg,
+                                created_at: ''
                             }
                         })
                 }

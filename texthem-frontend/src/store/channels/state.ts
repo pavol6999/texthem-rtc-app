@@ -6,6 +6,7 @@ export interface ChannelsStateInterface {
     messages: { [channel: string]: SerializedMessage[] };
     users: { [channel: string]: User[] };
     active: string | null;
+    typing: { [channel: string]: { [user: string]: string} }
 }
 
 function state(): ChannelsStateInterface {
@@ -15,6 +16,7 @@ function state(): ChannelsStateInterface {
         messages: {},
         users: {},
         active: null,
+        typing: {}
     };
 }
 

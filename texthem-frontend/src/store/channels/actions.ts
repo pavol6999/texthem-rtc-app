@@ -4,6 +4,7 @@ import { ChannelsStateInterface } from './state';
 import { channelService } from 'src/services';
 import { RawMessage } from 'src/contracts';
 import { api } from 'src/boot/axios';
+import ChannelService from 'src/services/ChannelService';
 
 const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
     async join({ commit }, channel: string) {
@@ -56,6 +57,15 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
             ?.addMessage(message);
         commit('NEW_MESSAGE', { channel, message: newMessage });
     },
+
+    async someoneTyping(    
+        { commit, state},
+        { channel, message, user } :  {channel: string; user: string, message: string}
+    ) {
+        ChannelService
+            .in(channel)
+            ?.addTyping(channel, user, message)
+    }
 };
 
 export default actions;
