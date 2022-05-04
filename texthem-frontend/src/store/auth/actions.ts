@@ -3,6 +3,7 @@ import { StateInterface } from '../index';
 import { AuthStateInterface } from './state';
 import { authService, authManager } from 'src/services';
 import { LoginCredentials, RegisterData } from 'src/contracts';
+import { Channel } from 'src/components/interface/models'
 
 const actions: ActionTree<AuthStateInterface, StateInterface> = {
     async check({ state, commit, dispatch }) {
@@ -17,7 +18,9 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
                 user.channels = res.real_channels;
 
                 if (user?.id !== state.user?.id) {
-                    console.log('idk');
+                    user.channels.forEach(async (e: Channel) => {
+                        await dispatch('channels/join', e.name, { root: true })
+                    });
                     // just logged in?
                     // await dispatch('channels/joinblanknamespace', null, { root: true })
                     // await dispatch('channels/join', 'general', { root: true });

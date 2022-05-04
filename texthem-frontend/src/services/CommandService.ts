@@ -22,6 +22,7 @@ class CommandManager {
             if (res.status == 200) {
                 console.log(res.data.new_channel);
                 store.commit('auth/NEW_CHANNEL', res.data.new_channel);
+                store.dispatch('channels/join', channel_name)
             }
         }
     }

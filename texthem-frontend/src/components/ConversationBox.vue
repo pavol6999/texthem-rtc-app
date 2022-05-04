@@ -6,11 +6,16 @@
             <div class="column col justify-end q-pa-md">
                 <div v-for="msg in curr_messages" :key="msg?.id">
                     <div class="msg_group_right" v-if="msg != null && is_mine(msg.author)">
-                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="msg.created_at" sent
-                            text-color="white" bg-color="primary" />
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)" sent
+                            text-color="white" bg-color="primary">
+                        </q-chat-message>
 
                         <q-avatar class="q-ml-md" color="primary" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
+
+                        <q-tooltip anchor="center right" self="top right">
+                            {{ real_date(msg.created_at) }}
+                        </q-tooltip>
                     </div>
 
 
@@ -18,8 +23,12 @@
                         <q-avatar class="q-mr-md" color="purple" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
 
-                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="msg.created_at"
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)"
                             text-color="white" :bg-color="has_mention(msg.content) ? 'accent' : 'purple'" />
+
+                        <q-tooltip anchor="center left" self="top left">
+                            {{ real_date(msg.created_at) }}
+                        </q-tooltip>
                     </div>
                 </div>
             </div>
@@ -100,6 +109,7 @@ import MessageSendBox from "./MessageSendBox.vue";
 import { QScrollArea, useQuasar } from "quasar";
 import { SerializedMessage, User } from 'src/contracts';
 import commandService from '../services/CommandService'
+import { date } from 'quasar'
 
 export default defineComponent({
     components: { UserTyping, MessageSendBox },
@@ -110,14 +120,9 @@ export default defineComponent({
         }
     },
     setup() {
-
-
         return {
-
             confirm_delete: ref(false),
             confirm_leave: ref(false),
-
-
         }
     },
     props: {
@@ -146,8 +151,6 @@ export default defineComponent({
             }
             return false
         },
-
-
     },
     watch: {
         curr_messages: {
@@ -158,6 +161,7 @@ export default defineComponent({
         }
     },
     methods: {
+
         async scrollHandler(ctx: any) {
 
             if (ctx.verticalPercentage == 0) {
@@ -179,6 +183,54 @@ export default defineComponent({
             else {
                 this.bottom = true
             }
+
+        },
+        real_date(stamp: string): string {
+            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
+            return date.formatDate(sent_at, 'DD.MM.YYYY HH:mm')
+        },
+        nice_stamp(stamp: string): string {
+            let now = new Date()
+            let tmp: string
+            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
+
+            let diff = date.getDateDiff(now, sent_at, 'seconds')
+
+            let diff_s = diff % 60
+            let diff_m = Math.floor(diff / 60)
+            let diff_h = Math.floor(diff_m / 60)
+            let diff_days = Math.floor(diff_h / 24)
+
+            if (diff_days > 0) {
+                if (diff_days > 1)
+                    tmp = 'days'
+                else 
+                    tmp = 'day'
+                return diff_days.toString() + ' ' + tmp + ' ago';
+            }
+            if (diff_h > 0) {
+                if (diff_h > 1)
+                    tmp = 'hours'
+                else 
+                    tmp = 'hour'
+                return diff_h.toString() + ' ' + tmp + ' ago';
+            }
+            if (diff_m > 0) {
+                if (diff_m > 1)
+                    tmp = 'minutes'
+                else 
+                    tmp = 'minute'
+                return diff_m.toString() + ' ' + tmp + ' ago';
+            }
+            if (diff_s > 0) {
+                if (diff_s > 1)
+                    tmp = 'seconds'
+                else 
+                    tmp = 'second'
+                return diff_s.toString() + ' ' + tmp + ' ago';
+            }
+
+            return 'now'
 
         },
         initial(name: string): string {

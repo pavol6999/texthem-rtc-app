@@ -103,8 +103,7 @@ export default class ChannelController {
       user?.related('channels').detach([channel.id])
       let removing = false
       if (channel.owner_id === req_user_id) {
-        let res = await Channel.findBy('owner_id', req_user_id)
-        res?.delete()
+        channel.delete()
         removing = true
       }
 
@@ -123,8 +122,8 @@ export default class ChannelController {
     let channel = await Channel.findBy('name', channel_name)
 
     if (channel != null && channel.owner_id === req_user_id) {
-      let res = await Channel.findBy('owner_id', req_user_id)
-      res?.delete()
+      // let res = await Channel.findBy('owner_id', req_user_id)
+      channel.delete()
 
       response.status(200)
       response.send({ left_channel: channel, was_removed: true })
