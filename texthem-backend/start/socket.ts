@@ -38,6 +38,7 @@ Ws.namespace('channels/:name')
     console.log(socket.id, "someone disconnected from", params.name)
   })
   */
+  .on('loadNewMessages', 'MessageController.loadNewMessages')
   .on('loadMessages', 'MessageController.loadMessages')
   .on('addMessage', 'MessageController.addMessage')
   .on('removeChannel', 'MessageController.deleteChannel')

@@ -13,7 +13,11 @@ export default class MessageController {
   constructor(private messageRepository: MessageRepositoryContract) {}
 
   public async loadMessages({ params }: WsContextContract) {
-    return this.messageRepository.getAll(params.name)
+    return (await this.messageRepository.getAll(params.name)).slice(0, 20)
+  }
+
+  public async loadNewMessages({ params }: WsContextContract, timestamp: string) {
+    return await this.messageRepository.getNew(params.name, timestamp)
   }
 
   public async addMessage({ params, socket, auth }: WsContextContract, content: string) {
@@ -24,7 +28,7 @@ export default class MessageController {
     return message
   }
 
-  public async deleteChannel( {socket} : WsContextContract, channel_name: string ) {
+  public async deleteChannel({ socket }: WsContextContract, channel_name: string) {
     socket.broadcast.emit('channelDeleted', channel_name)
   }
 }

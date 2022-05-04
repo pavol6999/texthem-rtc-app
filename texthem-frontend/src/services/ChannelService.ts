@@ -33,6 +33,13 @@ class ChannelSocketManager extends SocketManager {
     public loadMessages(): Promise<SerializedMessage[]> {
         return this.emitAsync('loadMessages');
     }
+
+    public loadNewMessages(
+        lastMessageTimeStamp: any
+    ): Promise<SerializedMessage[]> {
+        console.log(typeof lastMessageTimeStamp);
+        return this.emitAsync('loadNewMessages', lastMessageTimeStamp);
+    }
 }
 
 class ChannelService {
