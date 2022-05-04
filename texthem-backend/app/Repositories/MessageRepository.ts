@@ -3,29 +3,35 @@ import type {
   SerializedMessage,
 } from '@ioc:Repositories/MessageRepository'
 import Channel from 'App/Models/Channel'
+import Message from 'App/Models/Message'
+import { DateTime } from 'luxon'
 
 export default class MessageRepository implements MessageRepositoryContract {
   public async getAll(channelName: string): Promise<SerializedMessage[]> {
     const channel = await Channel.query()
       .where('name', channelName)
-      .preload('messages', (messagesQuery) => messagesQuery.preload('author'))
+      .preload('messages', (messagesQuery) =>
+        messagesQuery.preload('author').orderBy('created_at', 'desc').limit(10)
+      )
+
       .firstOrFail()
 
-    return channel.messages.map((message) => message.serialize() as SerializedMessage)
+    return channel.messages.map((message) => message.serialize() as SerializedMessage).reverse()
   }
 
   public async getNew(channelName: string, timestamp): Promise<SerializedMessage[]> {
     const channel = await Channel.query()
       .where('name', channelName)
-      .preload('messages', (messagesQuery) => messagesQuery.preload('author'))
+      .preload('messages', (messagesQuery) =>
+        messagesQuery
+          .where('created_at', '<', timestamp)
+          .orderBy('created_at', 'desc')
+          .limit(10)
+          .preload('author')
+      )
       .firstOrFail()
 
-    let messages = channel.messages
-      .filter((message) => message.createdAt > timestamp)
-      .map((message) => message.serialize() as SerializedMessage)
-
-      .splice(0, 10)
-    return messages
+    return channel.messages.map((message) => message.serialize() as SerializedMessage).reverse()
   }
 
   public async create(
