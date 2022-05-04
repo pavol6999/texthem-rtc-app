@@ -1,6 +1,7 @@
 <template>
     <div>
-        <q-scroll-area reverse ref='area' style="width: 100%; height: calc(100vh - 150px); " @scroll="scrollHandler">
+        <q-scroll-area reverse ref='area' v-show="is_data_fetched" style="width: 100%; height: calc(100vh - 150px); "
+            @scroll="scrollHandler">
 
 
             <div class="column col justify-end q-pa-md">
@@ -106,7 +107,8 @@ export default defineComponent({
     data() {
 
         return {
-            bottom: false
+            bottom: false,
+            is_data_fetched: false
         }
     },
     setup() {
@@ -131,10 +133,15 @@ export default defineComponent({
             return this.$store.getters['channels/activeChannel']
         },
         curr_messages(): SerializedMessage[] {
+            if (!this.is_data_fetched) {
+                this.is_data_fetched = true;
+                this.scrollMessages()
+            }
             this.scrollMessages()
             return this.$store.getters['channels/currentMessages']
         },
         curr_user(): User {
+
             return this.$store.getters['auth/currUser']
         },
 
@@ -149,18 +156,25 @@ export default defineComponent({
 
 
     },
-    watch: {
-        curr_messages: {
-            handler() {
-                this.$nextTick(() => this.scrollMessages())
-            },
-            deep: true
-        }
-    },
+    // watch: {
+    //     curr_messages: {
+    //         handler() {
+    //             this.$nextTick(() => {
+    //                 const area = this.$refs.area as QScrollArea
+
+    //                 // area && area.setScrollPercentage('vertical', 1.1)
+
+    //                 const target = (this.$refs.area as QScrollArea).getScrollTarget()
+    //                 target && (target.scrollTop = Number.MAX_SAFE_INTEGER)
+    //             })
+    //         },
+    //         deep: true
+    //     }
+    // },
     methods: {
         async scrollHandler(ctx: any) {
 
-            if (ctx.verticalPercentage == 0) {
+            if ((ctx.verticalPercentage < 0.05 && ctx.verticalPercentage != 0) && this.is_data_fetched) {
                 this.bottom = true
                 if (this.curr_messages != undefined && this.curr_messages.length > 0) {
                     // forgive me for I have sinned
