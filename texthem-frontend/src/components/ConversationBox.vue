@@ -137,7 +137,7 @@ export default defineComponent({
                 this.is_data_fetched = true;
                 this.scrollMessages()
             }
-            this.scrollMessages()
+
             return this.$store.getters['channels/currentMessages']
         },
         curr_user(): User {
