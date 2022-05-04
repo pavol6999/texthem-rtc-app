@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-scroll-area reverse ref='area' style="width: 100%; height: calc(100vh - 150px); ">
+        <q-scroll-area reverse ref='area' style="width: 100%; height: calc(100vh - 150px); " @scroll="scrollHandler">
 
 
             <div class="column col justify-end q-pa-md">
@@ -79,9 +79,10 @@
 
     <q-page-sticky expand position="bottom-left" style="margin-left: 50%; margin-bottom: 20px;">
 
-        <q-btn round size="md" color="secondary" @click="scrollMessages()" icon="arrow_downward">
+        <q-btn v-show="bottom" round size="md" color="secondary" @click="scrollMessages()" icon="arrow_downward">
             <q-tooltip class="bg-accent">Scroll to bottom</q-tooltip>
         </q-btn>
+
 
 
     </q-page-sticky>
@@ -102,6 +103,12 @@ import commandService from '../services/CommandService'
 
 export default defineComponent({
     components: { UserTyping, MessageSendBox },
+    data() {
+
+        return {
+            bottom: false
+        }
+    },
     setup() {
 
 
@@ -119,10 +126,12 @@ export default defineComponent({
         }
     },
     computed: {
+
         activeChannel(): string {
             return this.$store.getters['channels/activeChannel']
         },
         curr_messages(): SerializedMessage[] {
+            this.scrollMessages()
             return this.$store.getters['channels/currentMessages']
         },
         curr_user(): User {
@@ -149,6 +158,29 @@ export default defineComponent({
         }
     },
     methods: {
+        async scrollHandler(ctx: any) {
+
+            if (ctx.verticalPercentage == 0) {
+                this.bottom = true
+                if (this.curr_messages != undefined && this.curr_messages.length > 0) {
+                    // forgive me for I have sinned
+                    let timestamp = (this.curr_messages[0] as any).created_at
+
+                    await this.$store.dispatch('channels/loadNewMessages', { channel: this.activeChannel, timestamp: timestamp })
+                }
+
+
+
+            }
+            if (ctx.verticalPercentage > 0.95 || ctx.verticalPosition == 0) {
+
+                this.bottom = false
+            }
+            else {
+                this.bottom = true
+            }
+
+        },
         initial(name: string): string {
             return name.toUpperCase().split('')[0]
         },
@@ -161,7 +193,7 @@ export default defineComponent({
 
         scrollMessages() {
             const area = this.$refs.area as QScrollArea
-            console.log(area)
+
             area && area.setScrollPercentage('vertical', 1.1)
         },
 

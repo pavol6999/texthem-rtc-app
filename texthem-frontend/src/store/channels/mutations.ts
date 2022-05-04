@@ -1,8 +1,23 @@
 import { SerializedMessage, User } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { ChannelsStateInterface } from './state';
-
+import { Notify } from 'quasar';
 const mutation: MutationTree<ChannelsStateInterface> = {
+    NEW_MESSAGE_LOADING_START(state) {
+        state.loading = true;
+        state.error = null;
+    },
+    NEW_MESSAGE_LOADING_SUCCESS(
+        state,
+        {
+            channel,
+            messages,
+        }: { channel: string; messages: SerializedMessage[] }
+    ) {
+        state.loading = false;
+        state.error = null;
+        state.messages[channel] = [...messages, ...state.messages[channel]];
+    },
     LOADING_START(state) {
         state.loading = true;
         state.error = null;
@@ -46,6 +61,14 @@ const mutation: MutationTree<ChannelsStateInterface> = {
         { channel, message }: { channel: string; message: SerializedMessage }
     ) {
         state.messages[channel].push(message);
+        Notify.create({
+            timeout: 50000,
+            position: 'top',
+            color: 'secondary',
+            message: `${message.author!.nickname} (${channel}) - ${
+                message.content
+            }`,
+        });
     },
 };
 

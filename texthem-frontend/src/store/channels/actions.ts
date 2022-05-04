@@ -11,13 +11,30 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
             commit('LOADING_START');
             const messages = await channelService.join(channel).loadMessages();
             let users = (await api.get('listUsers/' + channel)).data.items;
-            console.log('users`', users);
+
             commit('LOADING_SUCCESS', { channel, messages, users });
         } catch (err) {
             commit('LOADING_ERROR', err);
             throw err;
         }
     },
+    async loadNewMessages(
+        { commit, state },
+        { channel: channel, timestamp: timestamp }
+    ) {
+        try {
+            commit('NEW_MESSAGE_LOADING_START');
+            console.log(`${timestamp}, timestamp`);
+            const messages = await channelService
+                .in(channel)
+                ?.loadNewMessages(timestamp);
+            commit('NEW_MESSAGE_LOADING_SUCCESS', { channel, messages });
+        } catch (err) {
+            commit('LOADING_ERROR', err);
+            throw err;
+        }
+    },
+
     // async joinblanknamespace( {commit} ) {
     //     await channelService.joinblanknamespace()
     // },

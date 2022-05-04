@@ -14,6 +14,20 @@ export default class MessageRepository implements MessageRepositoryContract {
     return channel.messages.map((message) => message.serialize() as SerializedMessage)
   }
 
+  public async getNew(channelName: string, timestamp): Promise<SerializedMessage[]> {
+    const channel = await Channel.query()
+      .where('name', channelName)
+      .preload('messages', (messagesQuery) => messagesQuery.preload('author'))
+      .firstOrFail()
+
+    let messages = channel.messages
+      .filter((message) => message.createdAt > timestamp)
+      .map((message) => message.serialize() as SerializedMessage)
+
+      .splice(0, 10)
+    return messages
+  }
+
   public async create(
     channelName: string,
     userId: number,
