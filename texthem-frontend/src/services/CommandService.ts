@@ -8,7 +8,7 @@ class CommandManager {
         channel: string | null,
         store: any
     ): Promise<void> {
-        let args = command.split(' ');
+        let args = command.trim().split(' ');
         let channel_name: string;
         let make_private = false;
 
@@ -22,7 +22,7 @@ class CommandManager {
             if (res.status == 200) {
                 console.log(res.data.new_channel);
                 store.commit('auth/NEW_CHANNEL', res.data.new_channel);
-                store.dispatch('channels/join', channel_name)
+                store.dispatch('channels/join', channel_name);
             }
         }
     }
@@ -61,10 +61,12 @@ class CommandManager {
             let res = await api.post('channelQuit', { name: channel });
             if (res.status == 200) {
                 console.log(res.data.left_channel);
-                await store.commit('auth/LEFT_CHANNEL', res.data.left_channel);
-                await store.dispatch('channels/leave', null, { root: true });
                 if (channel && res.data.was_removed)
                     await channelService.in(channel)?.removeChannel(channel);
+                await store.commit('auth/LEFT_CHANNEL', res.data.left_channel);
+                await store.dispatch('channels/leave', res.data.left_channel, {
+                    root: true,
+                });
                 store.commit('channels/CLEAR_CHANNEL', channel);
             } else {
                 console.log(res.status);

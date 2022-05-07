@@ -22,6 +22,7 @@ class ActivitySocketManager extends SocketManager {
 
         this.socket.on('user:offline', (user: User) => {
             console.log('User went offline', user);
+            store.commit('channels/TYPER_DISCONNECTED', user);
             store.commit('activity/USER_DISCONNECTED', user);
         });
 
@@ -39,7 +40,7 @@ class ActivitySocketManager extends SocketManager {
     }
 
     public async setNotifState(user: User) {
-        return this.emitAsync('user:change_notif_state', user)
+        return this.emitAsync('user:change_notif_state', user);
     }
 }
 

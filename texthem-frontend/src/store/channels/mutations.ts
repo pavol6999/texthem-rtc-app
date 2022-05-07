@@ -7,6 +7,20 @@ const mutation: MutationTree<ChannelsStateInterface> = {
         state.loading = true;
         state.error = null;
     },
+
+    NEW_USER(state, { channel, user }) {
+        console.log('kkt');
+        state.users[channel].push(user);
+    },
+
+    LEAVE_USER(state, { channel, user }) {
+        console.log('kkt left');
+        const usr = state.users[channel].find((usr) => usr.id === user.id);
+        const index = state.users[channel].indexOf(usr!, 0);
+        if (index > -1) {
+            state.users[channel].splice(index, 1);
+        }
+    },
     NEW_MESSAGE_LOADING_SUCCESS(
         state,
         {
@@ -63,17 +77,25 @@ const mutation: MutationTree<ChannelsStateInterface> = {
         state.messages[channel].push(message);
     },
     TYPING(
-        state, 
-        { channel, message, user }: { channel: string; message: string, user: string}
+        state,
+        {
+            channel,
+            message,
+            user,
+        }: { channel: string; message: string; user: string }
     ) {
-        if (!state.typing[channel])
-            state.typing[channel] = {}
+        if (!state.typing[channel]) state.typing[channel] = {};
 
-        if (message.trim().length == 0)
-            delete state.typing[channel][user]
+        if (message.trim().length == 0) delete state.typing[channel][user];
 
-        state.typing[channel][user] = message
-    }
+        state.typing[channel][user] = message;
+    },
+
+    TYPER_DISCONNECTED(state, user: string) {
+        Object.entries(state.typing).forEach((channel) => {
+            delete state.typing[channel[0]][user];
+        });
+    },
 };
 
 export default mutation;

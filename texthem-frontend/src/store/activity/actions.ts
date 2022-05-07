@@ -42,12 +42,13 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
                         root: rootState,
                     };
                     commit('ACC_INV', payload);
-                    commit(
-                        'channels/NEW_USER',
+
+                    dispatch('channels/join', ch_name, { root: true });
+                    await dispatch(
+                        'channels/newUser',
                         { user: rootState.auth.user, channel_name: ch_name },
                         { root: true }
                     );
-                    dispatch('channels/join', ch_name, { root: true})
                     // rootState.auth.user.channels.push(state.invitations[i]);
                 }
             }

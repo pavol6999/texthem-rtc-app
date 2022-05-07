@@ -1,21 +1,23 @@
 <template>
-    <q-drawer v-model="rightSideDrawer" side="right" elevated>
+    <q-drawer v-model="rightSideDrawer" v-if="activeChannel" side="right" elevated>
 
         <q-item-label header>Online</q-item-label>
         <TransitionGroup name="list">
             <q-item v-for="item in online_list" :key="item.nickname" clickable class="q-my-sm" v-ripple>
 
-                <q-item-section side>
+                <q-item-section side v-show="isTyping(item.nickname)">
                     <q-spinner-comment color="secondary" size="2em" />
                 </q-item-section>
                 <q-item-section avatar>
-                    <q-avatar color="yellow" text-color="primary" class="circle">{{ item.nickname.split('')[0] }}
+                    <q-avatar v-bind:color="get_color(item.nickname)" text-color="accent" class="circle">{{
+                            item.nickname.split('')[0]
+                    }}
                     </q-avatar>
                 </q-item-section>
 
                 <q-item-section>
                     <q-item-label>{{ item.nickname }}</q-item-label>
-                    <q-item-label caption>is writing...</q-item-label>
+                    <q-item-label caption v-show="isTyping(item.nickname)">is writing...</q-item-label>
                 </q-item-section>
 
                 <q-item-section side>
@@ -29,7 +31,8 @@
         <TransitionGroup name="list" tag="ul">
             <q-item v-for="item in offline_list" :key="item.nickname" class="q-mb-sm" clickable v-ripple>
                 <q-item-section avatar>
-                    <q-avatar color="primary" text-color="grey">{{ item.nickname.split('')[0] }}</q-avatar>
+                    <q-avatar :color="get_color(item.nickname)" text-color="grey">{{ item.nickname.split('')[0] }}
+                    </q-avatar>
                 </q-item-section>
 
                 <q-item-section>
@@ -62,6 +65,7 @@
 <script lang="ts">
 import { User } from 'src/contracts'
 import { defineComponent, ref } from 'vue'
+import { mapGetters } from 'vuex'
 
 
 
@@ -84,23 +88,23 @@ export default defineComponent({
             },
         }
         ,
-        async online_list(): Promise<User[]> {
-            console.log('kkt')
-            await this.sleep(1000);
-            console.log('kkt5')
-            let users = this.curr_users.filter(o1 => this.online_users.some(o2 => o1.id === o2.id))
+        online_list(): User[] {
+
+            let users = this.curr_users.filter((o1: User) => this.online_users.some(o2 => o1.id === o2.id))
             users.push(this.active_user)
-            console.log(users)
-            return users
+
+            return users ? users : []
 
         },
-        async offline_list(): Promise<User[]> {
-            await this.sleep(1000);
-            return this.curr_users.filter(o1 => !this.online_users.some(o2 => o1.id === o2.id)).filter(({ id }) => id !== this.active_user.id);
+        offline_list(): User[] {
+            let users = this.curr_users.filter(o1 => !this.online_users.some(o2 => o1.id === o2.id)).filter(({ id }) => id !== this.active_user.id);
+            return users ? users : []
         },
-        activeChannel() {
-            return []
+
+        typers() {
+            return this.$store.getters['channels/typers']
         },
+
         curr_users(): User[] {
 
             return this.$store.getters['channels/currentUsers']
@@ -111,12 +115,41 @@ export default defineComponent({
         active_user(): User {
             return this.$store.getters['auth/currUser']
         },
+        ...mapGetters('channels', {
+            activeChannel: 'activeChannel',
+        }),
 
     },
     methods: {
+        get_color(name: string): string {
+            let sum = 0
+            name.split('').forEach(element => {
+                sum = element.charCodeAt(0) * element.charCodeAt(0) + 27 + sum
+            });
+            switch (sum % 6) {
+                case 0: return 'green'
+                case 1: return 'red'
+                case 2: return 'purple'
+                case 3: return 'grey'
+                case 4: return 'blue'
+                case 5: return 'brown'
+            }
+            return 'purple'
+        },
         sleep(ms: number) {
             return new Promise(resolve => setTimeout(resolve, ms));
-        }
+        },
+        isTyping(username: string) {
+            //let typer = this.typers?.some((o: any) => o.nickname === username)
+            if (this.typers[this.activeChannel] != undefined && username in this.typers[this.activeChannel] && this.typers[this.activeChannel][username] != "") {
+                return true
+
+
+            }
+
+            return false
+            // return typer != undefined ? typer : false
+        },
     }
 
 }

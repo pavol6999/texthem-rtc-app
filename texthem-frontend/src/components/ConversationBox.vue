@@ -7,14 +7,17 @@
                 <div v-for="msg in curr_messages" :key="msg?.id">
                     <div class="msg_group_right" v-if="msg != null && is_mine(msg.author)">
 
-                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)" sent
-                            text-color="white" :bg-color="get_color(msg.author.nickname)">
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]"
+                            :stamp="nice_stamp(msg.created_at)" sent text-color="white"
+                            :bg-color="get_color(msg.author.nickname)">
 
                         </q-chat-message>
 
-                        <q-avatar class="q-ml-md" :color="get_color(msg.author.nickname)" text-color="white">{{ initial(msg.author.nickname) }}
+                        <q-avatar class="q-ml-md" :color="get_color(msg.author.nickname)" text-color="white">{{
+                                initial(msg.author.nickname)
+                        }}
                         </q-avatar>
-                
+
                         <q-tooltip anchor="center right" self="top right" v-if="false">
                             {{ real_date(msg.created_at) }}
                         </q-tooltip>
@@ -22,18 +25,17 @@
 
 
                     <div class="msg_group_left" v-else-if="msg != null">
-                        <q-avatar class="q-mr-md" :color="get_color(msg.author.nickname)" text-color="white">{{ initial(msg.author.nickname) }}
+                        <q-avatar class="q-mr-md" :color="get_color(msg.author.nickname)" text-color="white">{{
+                                initial(msg.author.nickname)
+                        }}
                         </q-avatar>
 
 
-                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)"
-                            text-color="white" :bg-color="has_mention(msg.content) ? 'accent' : get_color(msg.author.nickname)" 
-                            :class="has_mention(msg.content) ? 'bold_msg' : ''"
-                        />
-
                         <q-chat-message :name="msg.author.nickname" :text="[msg.content]"
                             :stamp="nice_stamp(msg.created_at)" text-color="white"
-                            :bg-color="has_mention(msg.content) ? 'accent' : 'purple'" />
+                            :bg-color="has_mention(msg.content) ? 'accent' : get_color(msg.author.nickname)"
+                            :class="has_mention(msg.content) ? 'bold_msg' : ''" />
+
 
 
                         <q-tooltip anchor="center left" self="top left" v-if="false">
@@ -41,6 +43,41 @@
                         </q-tooltip>
                     </div>
                 </div>
+
+
+                <div v-for="(msg, index) in typed_messages" :key="msg">
+
+
+
+                    <div class="msg_group_left" v-if="msg != ''">
+                        <q-avatar class="q-mr-md" :color="get_color(index)" text-color="white">{{
+                                initial(index)
+                        }}
+                        </q-avatar>
+
+                        <q-chat-message :name="index" text-color="white" :bg-color="get_color(index)">
+
+                            <q-spinner-dots size="2rem" />
+
+                        </q-chat-message>
+                        <q-tooltip class="bg-amber text-black shadow-4" anchor="bottom left" self="bottom left"
+                            :offset="[-150, -20]">
+                            {{ msg }}
+                        </q-tooltip>
+
+
+
+
+
+
+
+                    </div>
+                </div>
+
+
+
+
+
             </div>
         </q-scroll-area>
 
@@ -119,9 +156,7 @@ import { date } from 'quasar'
 
 export default defineComponent({
     components: { UserTyping, MessageSendBox },
-    updated() {
-        console.log('kkt')
-    },
+
     data() {
 
         return {
@@ -163,6 +198,13 @@ export default defineComponent({
             }
             return false
         },
+        typers() {
+            return this.$store.getters['channels/typers']
+        },
+        typed_messages() {
+            return this.typers[this.activeChannel] != undefined ? this.typers[this.activeChannel] : []
+        }
+
     },
     // watch: {
     //     curr_messages: {
@@ -203,9 +245,9 @@ export default defineComponent({
         get_color(name: string): string {
             let sum = 0
             name.split('').forEach(element => {
-                sum = element.charCodeAt(0)*element.charCodeAt(0) + 27 + sum
-            });            
-            switch(sum % 6) {
+                sum = element.charCodeAt(0) * element.charCodeAt(0) + 27 + sum
+            });
+            switch (sum % 6) {
                 case 0: return 'green'
                 case 1: return 'red'
                 case 2: return 'purple'
@@ -266,6 +308,7 @@ export default defineComponent({
             return 'now'
 
         },
+
         initial(name: string): string {
             return name.toUpperCase().split('')[0]
         },
@@ -306,6 +349,7 @@ export default defineComponent({
 .scroll {
     overflow: auto !important;
 }
+
 .bold_msg {
     font-weight: bold
 }

@@ -1,4 +1,4 @@
-import { RawMessage, SerializedMessage } from '../contracts';
+import { RawMessage, SerializedMessage, User } from '../contracts';
 import { BootParams, SocketManager } from './SocketManager';
 import { Notify } from 'quasar';
 
@@ -11,12 +11,14 @@ class ChannelSocketManager extends SocketManager {
     }
 
     format_notify(message: SerializedMessage, channel: string): string {
-        const maxlen = 25
-        let content = message.content
+        const maxlen = 25;
+        let content = message.content;
         if (message.content.length > maxlen)
-            content = content.slice(0, maxlen) + '...'
+            content = content.slice(0, maxlen) + '...';
 
-        return `${message.author!.nickname} (in channel ${channel}) sent: ${content}`
+        return `${
+            message.author!.nickname
+        } (in channel ${channel}) sent: ${content}`;
     }
 
     public subscribe({ store }: BootParams): void {
@@ -26,39 +28,47 @@ class ChannelSocketManager extends SocketManager {
             store.commit('channels/NEW_MESSAGE', { channel, message });
 
             // todo check whether user should receive notifs
-            let notifs_on = store.state.auth.user?.notifications
+            let notifs_on = store.state.auth.user?.notifications;
 
             if (notifs_on) {
-                let formatted_notif = this.format_notify(message, channel)
+                let formatted_notif = this.format_notify(message, channel);
                 Notify.create({
                     timeout: 5000,
                     closeBtn: 'X',
                     position: 'top',
                     color: 'orange',
-                    message: formatted_notif
+                    message: formatted_notif,
                 });
 
-                if (!("Notification" in window)) {
-                    alert("This browser does not support desktop notification");
+                if (!('Notification' in window)) {
+                    alert('This browser does not support desktop notification');
                 }
-                
+
                 // Let's check whether notification permissions have already been granted
-                else if (Notification.permission === "granted") {
+                else if (Notification.permission === 'granted') {
                     // If it's okay let's create a notification
-                    var notification = new Notification(`New message in ${channel}`, {
-                        body: formatted_notif
-                    });
-                }
-                
-                // Otherwise, we need to ask the user for permission
-                else if (Notification.permission !== "denied") {
-                    Notification.requestPermission().then(function (permission) {
-                    // If the user accepts, let's create a notification
-                    if (permission === "granted") {
-                        var notification = new Notification(`New message in ${channel}`, {
+                    var notification = new Notification(
+                        `New message in ${channel}`,
+                        {
                             body: formatted_notif,
-                        });
-                    }
+                        }
+                    );
+                }
+
+                // Otherwise, we need to ask the user for permission
+                else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(function (
+                        permission
+                    ) {
+                        // If the user accepts, let's create a notification
+                        if (permission === 'granted') {
+                            var notification = new Notification(
+                                `New message in ${channel}`,
+                                {
+                                    body: formatted_notif,
+                                }
+                            );
+                        }
                     });
                 }
             }
@@ -68,10 +78,35 @@ class ChannelSocketManager extends SocketManager {
             store.commit('auth/CHANNEL_DELETED', channel_name);
             store.commit('channels/CLEAR_DELETED_CHANNEL', channel_name);
         });
+        this.socket.on('user:new', (params: any) => {
+            console.log('params', params);
+            store.commit('channels/NEW_USER', {
+                channel: params.channel,
+                user: params.user,
+            });
+        });
+        this.socket.on('user:leave', (params: any) => {
+            console.log('leave', params);
+            store.commit('channels/LEAVE_USER', {
+                channel: params.channel,
+                user: params.user,
+            });
+        });
 
-        this.socket.on('someoneTyping', ({channel, user, message } : {channel: string, user: string, message: string } ) => {
-            store.commit('channels/TYPING', { channel, user, message })
-        })
+        this.socket.on(
+            'someoneTyping',
+            ({
+                channel,
+                user,
+                message,
+            }: {
+                channel: string;
+                user: string;
+                message: string;
+            }) => {
+                store.commit('channels/TYPING', { channel, user, message });
+            }
+        );
     }
 
     public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -79,7 +114,7 @@ class ChannelSocketManager extends SocketManager {
     }
 
     public addTyping(channel: string, user: string, message: string) {
-        this.emitAsync('someoneTyping', channel, user, message )
+        this.emitAsync('someoneTyping', channel, user, message);
     }
 
     public removeChannel(channel_name: string): Promise<void> {
@@ -96,6 +131,14 @@ class ChannelSocketManager extends SocketManager {
     ): Promise<SerializedMessage[]> {
         console.log(typeof lastMessageTimeStamp);
         return this.emitAsync('loadNewMessages', lastMessageTimeStamp);
+    }
+
+    public notify(user: User): Promise<void> {
+        return this.emitAsync('notify', user);
+    }
+
+    public notifyLeave(user: User): Promise<void> {
+        return this.emitAsync('notifyLeave', user);
     }
 }
 

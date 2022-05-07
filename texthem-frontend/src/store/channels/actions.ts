@@ -25,7 +25,7 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
     ) {
         try {
             commit('NEW_MESSAGE_LOADING_START');
-            console.log(`${timestamp}, timestamp`);
+
             const messages = await channelService
                 .in(channel)
                 ?.loadNewMessages(timestamp);
@@ -39,12 +39,14 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
     // async joinblanknamespace( {commit} ) {
     //     await channelService.joinblanknamespace()
     // },
-    async leave({ getters, commit }, channel: string | null) {
+    async leave({ getters, commit, rootState }, channel: string | null) {
         const leaving: string[] =
             channel !== null ? [channel] : getters.joinedChannels;
 
-        leaving.forEach((c) => {
+        leaving.forEach(async (c) => {
+            await channelService.in(c)?.notifyLeave(rootState.auth.user!);
             channelService.leave(c);
+
             commit('CLEAR_CHANNEL', c);
         });
     },
@@ -58,14 +60,20 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
         commit('NEW_MESSAGE', { channel, message: newMessage });
     },
 
-    async someoneTyping(    
-        { commit, state},
-        { channel, message, user } :  {channel: string; user: string, message: string}
+    async newUser({ commit }, { user, channel_name }) {
+        await channelService.in(channel_name)?.notify(user);
+    },
+
+    async someoneTyping(
+        { commit, state },
+        {
+            channel,
+            message,
+            user,
+        }: { channel: string; user: string; message: string }
     ) {
-        ChannelService
-            .in(channel)
-            ?.addTyping(channel, user, message)
-    }
+        ChannelService.in(channel)?.addTyping(channel, user, message);
+    },
 };
 
 export default actions;

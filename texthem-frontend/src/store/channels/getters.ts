@@ -6,6 +6,9 @@ const getters: GetterTree<ChannelsStateInterface, StateInterface> = {
     joinedChannels(context) {
         return Object.keys(context.messages);
     },
+    typers(context) {
+        return context.typing !== null ? context.typing : [];
+    },
     currentMessages(context) {
         return context.active !== null ? context.messages[context.active] : [];
     },
