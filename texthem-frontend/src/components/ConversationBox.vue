@@ -1,14 +1,13 @@
 <template>
     <div>
-        <q-scroll-area reverse ref='area' v-show="is_data_fetched" style="width: 100%; height: calc(100vh - 150px); "
-            @scroll="scrollHandler">
+        <q-scroll-area reverse ref='area' style="width: 100%; height: calc(100vh - 150px); " @scroll="scrollHandler">
 
 
             <div class="column col justify-end q-pa-md">
                 <div v-for="msg in curr_messages" :key="msg?.id">
                     <div class="msg_group_right" v-if="msg != null && is_mine(msg.author)">
-                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)" sent
-                            text-color="white" bg-color="primary">
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]"
+                            :stamp="nice_stamp(msg.created_at)" sent text-color="white" bg-color="primary">
                         </q-chat-message>
 
                         <q-avatar class="q-ml-md" color="primary" text-color="white">{{ initial(msg.author.nickname) }}
@@ -24,8 +23,9 @@
                         <q-avatar class="q-mr-md" color="purple" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
 
-                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)"
-                            text-color="white" :bg-color="has_mention(msg.content) ? 'accent' : 'purple'" />
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]"
+                            :stamp="nice_stamp(msg.created_at)" text-color="white"
+                            :bg-color="has_mention(msg.content) ? 'accent' : 'purple'" />
 
                         <q-tooltip anchor="center left" self="top left">
                             {{ real_date(msg.created_at) }}
@@ -114,13 +114,17 @@ import { date } from 'quasar'
 
 export default defineComponent({
     components: { UserTyping, MessageSendBox },
+    updated() {
+        console.log('kkt')
+    },
     data() {
 
         return {
             bottom: false,
-            is_data_fetched: false
+
         }
     },
+
     setup() {
         return {
             confirm_delete: ref(false),
@@ -138,10 +142,6 @@ export default defineComponent({
             return this.$store.getters['channels/activeChannel']
         },
         curr_messages(): SerializedMessage[] {
-            if (!this.is_data_fetched) {
-                this.is_data_fetched = true;
-                this.scrollMessages()
-            }
 
             return this.$store.getters['channels/currentMessages']
         },
@@ -178,7 +178,7 @@ export default defineComponent({
 
         async scrollHandler(ctx: any) {
 
-            if ((ctx.verticalPercentage < 0.05 && ctx.verticalPercentage != 0) && this.is_data_fetched) {
+            if ((ctx.verticalPercentage < 0.05 && ctx.verticalPercentage != 0)) {
                 this.bottom = true
                 if (this.curr_messages != undefined && this.curr_messages.length > 0) {
                     // forgive me for I have sinned
@@ -200,13 +200,13 @@ export default defineComponent({
 
         },
         real_date(stamp: string): string {
-            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
+            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')
             return date.formatDate(sent_at, 'DD.MM.YYYY HH:mm')
         },
         nice_stamp(stamp: string): string {
             let now = new Date()
             let tmp: string
-            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
+            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')
 
             let diff = date.getDateDiff(now, sent_at, 'seconds')
 
@@ -218,28 +218,28 @@ export default defineComponent({
             if (diff_days > 0) {
                 if (diff_days > 1)
                     tmp = 'days'
-                else 
+                else
                     tmp = 'day'
                 return diff_days.toString() + ' ' + tmp + ' ago';
             }
             if (diff_h > 0) {
                 if (diff_h > 1)
                     tmp = 'hours'
-                else 
+                else
                     tmp = 'hour'
                 return diff_h.toString() + ' ' + tmp + ' ago';
             }
             if (diff_m > 0) {
                 if (diff_m > 1)
                     tmp = 'minutes'
-                else 
+                else
                     tmp = 'minute'
                 return diff_m.toString() + ' ' + tmp + ' ago';
             }
             if (diff_s > 0) {
                 if (diff_s > 1)
                     tmp = 'seconds'
-                else 
+                else
                     tmp = 'second'
                 return diff_s.toString() + ' ' + tmp + ' ago';
             }
