@@ -12,12 +12,15 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
                 name: channel,
                 username: user,
             });
-
-            const invitee = state.users.find((u) => u.nickname == user);
-            console.log('invitee', invitee);
-            if (invitee) {
-                console.log(`User ${user} is online. Will emit a socket event`);
-                await activityService.sendInvite(invitee);
+            if (res.status == 200) {
+                const invitee = state.users.find((u) => u.nickname == user);
+                console.log('invitee', invitee);
+                if (invitee) {
+                    console.log(
+                        `User ${user} is online. Will emit a socket event`
+                    );
+                    await activityService.sendInvite(invitee);
+                }
             }
 
             if (res === null) {

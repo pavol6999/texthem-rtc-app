@@ -1,6 +1,6 @@
 <template>
     <q-drawer v-model="leftSideDrawer" side="left" bordered>
-        <div class="text-h4 row justify-center" style="margin-top:15px">Channels</div>
+        <div class="text-h4 row justify-center" style="margin-top:15px; margin-bottom:15px">Channels</div>
         <q-expansion-item v-if="invitation_list.length !== 0" label="Invitations" header-class="text-yellow"
             icon="mail">
             <q-item v-for="item in invitation_list" :key="item.name" active-class="sel_item">
