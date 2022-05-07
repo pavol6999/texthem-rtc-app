@@ -1,6 +1,7 @@
 import { User } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { AuthStateInterface } from './state';
+import { activityService, channelService } from 'src/services';
 
 const mutation: MutationTree<AuthStateInterface> = {
     AUTH_START(state) {
@@ -16,7 +17,10 @@ const mutation: MutationTree<AuthStateInterface> = {
         state.errors = errors;
     },
     setNotifications(state, val: boolean) {
-        if (state.user) state.user.notifications = val;
+        if (state.user) {
+            state.user.notifications = val;    
+            activityService.setNotifState(state.user);
+        }
     },
     NEW_CHANNEL(state, new_ch) {
         console.log('mutation new channel:');

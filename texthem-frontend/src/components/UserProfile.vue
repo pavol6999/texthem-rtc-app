@@ -1,7 +1,7 @@
 <template>
     <div class="q-pa-md">
         <q-btn round outline class="without-icon" unelevated>
-            <q-avatar color="purple" text-color="white" :size="size">
+            <q-avatar :color="get_color(username)" text-color="white" :size="size">
                 {{ initial }}
             </q-avatar>
 
@@ -10,13 +10,12 @@
                     <div class="text-h6 q-mb-md">Settings</div>
                     <q-toggle :model-value="notifications" checked-icon="check" color="red"
                         @click="notifications = !notifications" unchecked-icon="clear" label="Notifications" />
-                    <q-toggle v-model="away" label="Away" />
                 </div>
 
                 <q-separator vertical inset class="q-mx-lg" />
 
                 <div class="column items-center">
-                    <q-avatar color="primary" text-color="white" size="72px">
+                    <q-avatar :color="get_color(username)" text-color="white" size="72px">
                         {{ initial }}
                     </q-avatar>
 
@@ -68,6 +67,21 @@ export default defineComponent({
     },
     methods: {
         ...mapActions('auth', ['logout']),
+        get_color(name: string): string {
+            let sum = 0
+            name.split('').forEach(element => {
+                sum = element.charCodeAt(0)*element.charCodeAt(0) + 27 + sum
+            });            
+            switch(sum % 6) {
+                case 0: return 'green'
+                case 1: return 'red'
+                case 2: return 'purple'
+                case 3: return 'grey'
+                case 4: return 'blue'
+                case 5: return 'brown'
+            }
+            return 'purple'
+        },
     }
 }
 )

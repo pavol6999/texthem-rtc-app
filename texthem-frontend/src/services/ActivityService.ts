@@ -37,6 +37,10 @@ class ActivitySocketManager extends SocketManager {
     public async sendInvite(user: User) {
         return this.emitAsync('user:refresh', user);
     }
+
+    public async setNotifState(user: User) {
+        return this.emitAsync('user:change_notif_state', user)
+    }
 }
 
 export default new ActivitySocketManager('/');

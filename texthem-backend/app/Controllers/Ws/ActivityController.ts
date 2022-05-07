@@ -60,7 +60,7 @@ export default class ActivityController {
   }
 
   // send an event to user to refresh his invitations
-  public async onRefresh({ socket, auth, logger }: WsContextContract, user: User): Promise<void> {
+  public async onRefresh({ socket, logger }: WsContextContract, user: User): Promise<void> {
     let user_model = await User.find(user.id)
     if (user_model == null) {
       return
@@ -77,5 +77,13 @@ export default class ActivityController {
     socket.join(room)
     socket.in(room).emit('user:invitations', invitations)
     logger.info(`user ${user.id} - invites refreshed`)
+  }
+
+  public async on_change_notifs({socket}, user: User): Promise<void> {
+    let tmp = await User.find(user.id)
+    if (tmp) {
+      tmp.notifications = user.notifications
+      tmp.save()
+    }
   }
 }
