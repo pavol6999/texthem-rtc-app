@@ -6,8 +6,10 @@
             <div class="column col justify-end q-pa-md">
                 <div v-for="msg in curr_messages" :key="msg?.id">
                     <div class="msg_group_right" v-if="msg != null && is_mine(msg.author)">
+
                         <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)" sent
                             text-color="white" :bg-color="get_color(msg.author.nickname)">
+
                         </q-chat-message>
 
                         <q-avatar class="q-ml-md" :color="get_color(msg.author.nickname)" text-color="white">{{ initial(msg.author.nickname) }}
@@ -23,10 +25,16 @@
                         <q-avatar class="q-mr-md" :color="get_color(msg.author.nickname)" text-color="white">{{ initial(msg.author.nickname) }}
                         </q-avatar>
 
+
                         <q-chat-message :name="msg.author.nickname" :text="[msg.content]" :stamp="nice_stamp(msg.created_at)"
                             text-color="white" :bg-color="has_mention(msg.content) ? 'accent' : get_color(msg.author.nickname)" 
                             :class="has_mention(msg.content) ? 'bold_msg' : ''"
                         />
+
+                        <q-chat-message :name="msg.author.nickname" :text="[msg.content]"
+                            :stamp="nice_stamp(msg.created_at)" text-color="white"
+                            :bg-color="has_mention(msg.content) ? 'accent' : 'purple'" />
+
 
                         <q-tooltip anchor="center left" self="top left" v-if="false">
                             {{ real_date(msg.created_at) }}
@@ -111,12 +119,17 @@ import { date } from 'quasar'
 
 export default defineComponent({
     components: { UserTyping, MessageSendBox },
+    updated() {
+        console.log('kkt')
+    },
     data() {
 
         return {
-            bottom: false
+            bottom: false,
+
         }
     },
+
     setup() {
         return {
             confirm_delete: ref(false),
@@ -134,10 +147,11 @@ export default defineComponent({
             return this.$store.getters['channels/activeChannel']
         },
         curr_messages(): SerializedMessage[] {
-            this.scrollMessages()
+
             return this.$store.getters['channels/currentMessages']
         },
         curr_user(): User {
+
             return this.$store.getters['auth/currUser']
         },
 
@@ -150,17 +164,27 @@ export default defineComponent({
             return false
         },
     },
-    watch: {
-        curr_messages: {
-            handler() {
-                this.$nextTick(() => this.scrollMessages())
-            },
-            deep: true
-        }
-    },
+    // watch: {
+    //     curr_messages: {
+    //         handler() {
+    //             this.$nextTick(() => {
+    //                 const area = this.$refs.area as QScrollArea
+
+    //                 // area && area.setScrollPercentage('vertical', 1.1)
+
+    //                 const target = (this.$refs.area as QScrollArea).getScrollTarget()
+    //                 target && (target.scrollTop = Number.MAX_SAFE_INTEGER)
+    //             })
+    //         },
+    //         deep: true
+    //     }
+    // },
     methods: {
         async scrollHandler(ctx: any) {
-            if (ctx.verticalPercentage == 0) {
+
+
+            if ((ctx.verticalPercentage < 0.05 && ctx.verticalPercentage != 0)) {
+
                 this.bottom = true
                 if (this.curr_messages != undefined && this.curr_messages.length > 0) {
                     // forgive me for I have sinned
@@ -192,7 +216,7 @@ export default defineComponent({
             return 'purple'
         },
         real_date(stamp: string): string {
-            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
+            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')
             return date.formatDate(sent_at, 'DD.MM.YYYY HH:mm')
         },
         nice_stamp(stamp: string): string {
@@ -201,7 +225,7 @@ export default defineComponent({
 
             let now = new Date()
             let tmp: string
-            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')            
+            let sent_at = date.extractDate(stamp, 'YYYY-MM-DDTHH:mm:ss')
 
             let diff = date.getDateDiff(now, sent_at, 'seconds')
 
@@ -213,28 +237,28 @@ export default defineComponent({
             if (diff_days > 0) {
                 if (diff_days > 1)
                     tmp = 'days'
-                else 
+                else
                     tmp = 'day'
                 return diff_days.toString() + ' ' + tmp + ' ago';
             }
             if (diff_h > 0) {
                 if (diff_h > 1)
                     tmp = 'hours'
-                else 
+                else
                     tmp = 'hour'
                 return diff_h.toString() + ' ' + tmp + ' ago';
             }
             if (diff_m > 0) {
                 if (diff_m > 1)
                     tmp = 'minutes'
-                else 
+                else
                     tmp = 'minute'
                 return diff_m.toString() + ' ' + tmp + ' ago';
             }
             if (diff_s > 0) {
                 if (diff_s > 1)
                     tmp = 'seconds'
-                else 
+                else
                     tmp = 'second'
                 return diff_s.toString() + ' ' + tmp + ' ago';
             }
