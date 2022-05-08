@@ -191,8 +191,20 @@ export default class ChannelController {
       }
 
       if (is_in_the_channel) {
+        let channel_users: User[] = []
         let all_users = (await Channel.query().where('name', channel_name).preload('users').first())
           ?.users
+        if (all_users != null) {
+          for (let i = 0; i < all_users.length; i++) {
+            let tmp = await all_users[i]
+              .related('channels')
+              .pivotQuery()
+              .where('channel_id', channel.id)
+              .where('user_id', all_users[i].id)
+              .first()
+            if (tmp.accepted) channel_users.push(all_users[i])
+          }
+        }
 
         response.status(200)
         response.send({ items: all_users })

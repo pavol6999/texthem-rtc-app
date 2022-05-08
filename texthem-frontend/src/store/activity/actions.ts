@@ -6,8 +6,7 @@ import { ActivityInterface } from './state';
 import { activityService, channelService } from 'src/services';
 import { join } from 'path';
 const actions: ActionTree<ActivityInterface, StateInterface> = {
-
-    async removed_user({ state, commit }, {channel, username }) {
+    async removed_user({ state, commit }, { channel, username }) {
         await channelService.in(channel)?.sendKick(username);
     },
 
@@ -20,11 +19,8 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
             });
             if (res.status == 200) {
                 const invitee = state.users.find((u) => u.nickname == user);
-                console.log('invitee', invitee);
+
                 if (invitee) {
-                    console.log(
-                        `User ${user} is online. Will emit a socket event`
-                    );
                     await activityService.sendInvite(invitee);
                 }
             }
@@ -40,7 +36,7 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
         }
     },
 
-    async join_ch({ state, commit, rootState, dispatch}, ch_name: string) {
+    async join_ch({ state, commit, rootState, dispatch }, ch_name: string) {
         await dispatch(
             'channels/newUser',
             { user: rootState.auth.user, channel_name: ch_name },
@@ -50,7 +46,7 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
 
     async inv_acc({ state, commit, rootState, dispatch }, ch_name: string) {
         let clone = [];
-        console.log('channel sttring', ch_name);
+
         if (rootState.auth.user) {
             for (let i = 0; i < state.invitations.length; i++) {
                 if (state.invitations[i].name === ch_name) {

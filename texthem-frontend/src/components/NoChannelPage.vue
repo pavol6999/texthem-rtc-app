@@ -18,12 +18,10 @@
         </div>
         <div class="col-12 col-md-6 flex justify-center text-empty-channel">
             <div>
-                <p
-                    class="col-12 text-h6 text-center text-weight-bold"
-                >To view content of a channel, you need to select a channel from the channel drawer.</p>
-                <p
-                    class="col-12 text-subtitle-2 text-center text-weight-medium"
-                >You can also create a new channel using the "/create" command in command line or clicking the "Create New Channel" Button</p>
+                <p class="col-12 text-h6 text-center text-weight-bold">To view content of a channel, you need to select
+                    a channel from the channel drawer.</p>
+                <p class="col-12 text-subtitle-2 text-center text-weight-medium">You can also create a new channel using
+                    the "/join" command in command line </p>
             </div>
         </div>
     </div>

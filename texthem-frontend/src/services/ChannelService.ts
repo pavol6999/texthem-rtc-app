@@ -29,7 +29,9 @@ class ChannelSocketManager extends SocketManager {
 
             // todo check whether user should receive notifs
             let notifs_on = store.state.auth.user?.notifications;
-            let is_recipient = (message.content.includes('@' + store.state.auth.user?.nickname))                
+            let is_recipient = message.content.includes(
+                '@' + store.state.auth.user?.nickname
+            );
 
             if (notifs_on || is_recipient) {
                 let formatted_notif = this.format_notify(message, channel);
@@ -80,14 +82,12 @@ class ChannelSocketManager extends SocketManager {
             store.commit('channels/CLEAR_DELETED_CHANNEL', channel_name);
         });
         this.socket.on('user:new', (params: any) => {
-            console.log('params', params);
             store.commit('channels/NEW_USER', {
                 channel: params.channel,
                 user: params.user,
             });
         });
         this.socket.on('user:leave', (params: any) => {
-            console.log('leave', params);
             store.commit('channels/LEAVE_USER', {
                 channel: params.channel,
                 user: params.user,
@@ -110,17 +110,16 @@ class ChannelSocketManager extends SocketManager {
         );
 
         this.socket.on('userWasKicked', (params: any) => {
-            console.log('userkicked received', params.username, channel)
-            let me = store.getters['auth/currUser'].nickname
+            let me = store.getters['auth/currUser'].nickname;
 
             if (me == params.username) {
-                store.commit('auth/LEFT_CHANNEL_NAME', channel)
+                store.commit('auth/LEFT_CHANNEL_NAME', channel);
                 store.dispatch('channels/leave', channel, { root: true });
                 store.commit('channels/CLEAR_CHANNEL', channel);
             } else {
                 // remove kicked user for the channel
             }
-        })
+        });
     }
 
     public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -132,7 +131,6 @@ class ChannelSocketManager extends SocketManager {
     }
 
     public removeChannel(channel_name: string): Promise<void> {
-        console.log('yea this happens');
         return this.emitAsync('removeChannel', channel_name);
     }
 
@@ -143,7 +141,6 @@ class ChannelSocketManager extends SocketManager {
     public loadNewMessages(
         lastMessageTimeStamp: any
     ): Promise<SerializedMessage[]> {
-        console.log(typeof lastMessageTimeStamp);
         return this.emitAsync('loadNewMessages', lastMessageTimeStamp);
     }
 
@@ -156,7 +153,7 @@ class ChannelSocketManager extends SocketManager {
     }
 
     public sendKick(username: string) {
-        return this.emitAsync('userKicked', username)
+        return this.emitAsync('userKicked', username);
     }
 }
 
@@ -168,7 +165,7 @@ class ChannelService {
         if (this.channels.has(name)) {
             console.info(`User is already joined in channel "${name}"`);
         }
-        console.log('joined');
+
         // connect to given channel namespace
         const channel = new ChannelSocketManager(`/channels/${name}`);
         this.channels.set(name, channel);

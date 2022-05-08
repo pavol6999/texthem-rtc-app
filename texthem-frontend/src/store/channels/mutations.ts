@@ -57,12 +57,9 @@ const mutation: MutationTree<ChannelsStateInterface> = {
     },
     CLEAR_DELETED_CHANNEL(state, channel) {
         if (state.active == channel) {
-            console.log('current channel was removed');
             state.active = null;
             delete state.messages[channel];
             delete state.users[channel];
-        } else {
-            console.log('some other channel was removed');
         }
     },
     SET_ACTIVE(state, channel: string) {
@@ -90,7 +87,6 @@ const mutation: MutationTree<ChannelsStateInterface> = {
     },
 
     TYPER_DISCONNECTED(state, user: User) {
-        console.log(user)
         Object.entries(state.typing).forEach((channel) => {
             delete state.typing[channel[0]][user.nickname];
         });

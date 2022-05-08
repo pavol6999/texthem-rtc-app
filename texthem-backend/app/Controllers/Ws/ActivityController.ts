@@ -16,7 +16,6 @@ export default class ActivityController {
     if (userSockets.size === 0) {
       socket.broadcast.emit('user:online', auth.user)
     }
-    console.log(`user sockets`, userSockets)
 
     // add this socket to user room
     socket.join(room)
@@ -73,13 +72,13 @@ export default class ActivityController {
     }
 
     const room = this.getUserRoom(user)
-    console.log(`refresh user ${user.id}`, room)
+
     socket.join(room)
     socket.in(room).emit('user:invitations', invitations)
     logger.info(`user ${user.id} - invites refreshed`)
   }
 
-  public async on_change_notifs({socket}, user: User): Promise<void> {
+  public async on_change_notifs({ socket }, user: User): Promise<void> {
     let tmp = await User.find(user.id)
     if (tmp) {
       tmp.notifications = user.notifications

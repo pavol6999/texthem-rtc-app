@@ -20,11 +20,9 @@ class CommandManager {
                 private: make_private,
             });
             if (res.status == 200) {
-                console.log(res.data.new_channel);
                 store.commit('auth/NEW_CHANNEL', res.data.new_channel);
                 store.dispatch('channels/join', channel_name);
-                store.dispatch('activity/join_ch', channel_name)
-
+                store.dispatch('activity/join_ch', channel_name);
             }
         }
     }
@@ -38,7 +36,6 @@ class CommandManager {
         if (channel != null) {
             let res = await api.post('channelCancel', { name: channel_name });
             if (res.status == 200) {
-                console.log(res.data.left_channel);
                 if (channel_name && res.data.was_removed)
                     await channelService
                         .in(channel_name)
@@ -49,8 +46,6 @@ class CommandManager {
                 });
                 store.commit('channels/CLEAR_CHANNEL', channel_name);
             }
-        } else {
-            console.log('not in a channel rn');
         }
     }
     // delete this channel (creator only)
@@ -62,7 +57,6 @@ class CommandManager {
         if (channel != null) {
             let res = await api.post('channelQuit', { name: channel });
             if (res.status == 200) {
-                console.log(res.data.left_channel);
                 if (channel && res.data.was_removed)
                     await channelService.in(channel)?.removeChannel(channel);
                 await store.commit('auth/LEFT_CHANNEL', res.data.left_channel);
@@ -70,12 +64,7 @@ class CommandManager {
                     root: true,
                 });
                 store.commit('channels/CLEAR_CHANNEL', channel);
-            } else {
-                console.log(res.status);
-                console.log('insufficient auth probably');
             }
-        } else {
-            console.log('not in a channel rn');
         }
     }
 
@@ -89,7 +78,6 @@ class CommandManager {
             let res = await api.get('channelList/' + channel);
             return res.data.user_list;
         } else {
-            console.log('not in a channel rn');
             return [];
         }
     }
@@ -108,8 +96,6 @@ class CommandManager {
                 { channel: channel, user: user },
                 { root: true }
             );
-        } else {
-            console.log('no channel or invalid format');
         }
     }
     // remove someone from a private channel
@@ -129,11 +115,9 @@ class CommandManager {
             if (res.status == 200) {
                 store.dispatch('activity/removed_user', {
                     channel: channel,
-                    username: user
-                })
+                    username: user,
+                });
             }
-        } else {
-            console.log('no channel or invalid format');
         }
     }
     // kick someone from a public channel
@@ -153,11 +137,9 @@ class CommandManager {
             if (res.status == 200) {
                 store.dispatch('activity/removed_user', {
                     channel: channel,
-                    username: user
-                })
+                    username: user,
+                });
             }
-        } else {
-            console.log('no channel or invalid format');
         }
     }
 

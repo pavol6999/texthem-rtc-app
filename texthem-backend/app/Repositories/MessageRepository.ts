@@ -3,8 +3,6 @@ import type {
   SerializedMessage,
 } from '@ioc:Repositories/MessageRepository'
 import Channel from 'App/Models/Channel'
-import Message from 'App/Models/Message'
-import { DateTime } from 'luxon'
 
 export default class MessageRepository implements MessageRepositoryContract {
   public async getAll(channelName: string): Promise<SerializedMessage[]> {

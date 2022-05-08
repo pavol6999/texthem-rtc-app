@@ -18,13 +18,11 @@ const mutation: MutationTree<AuthStateInterface> = {
     },
     setNotifications(state, val: boolean) {
         if (state.user) {
-            state.user.notifications = val;    
+            state.user.notifications = val;
             activityService.setNotifState(state.user);
         }
     },
     NEW_CHANNEL(state, new_ch) {
-        console.log('mutation new channel:');
-        console.log(new_ch);
         state.user?.channels.push(new_ch);
     },
     CHANNEL_DELETED(state, ch) {
@@ -35,8 +33,6 @@ const mutation: MutationTree<AuthStateInterface> = {
         }
     },
     LEFT_CHANNEL(state, ch) {
-        console.log('mutation leaving channel:');
-        console.log(ch);
         if (state.user != null) {
             // remove the channel from store
             state.user.channels = state.user.channels.filter((e) => {
@@ -46,11 +42,11 @@ const mutation: MutationTree<AuthStateInterface> = {
     },
     LEFT_CHANNEL_NAME(state, ch) {
         if (state.user != null) {
-            state.user.channels = state.user.channels.filter(e => {
-                return e.name != ch
-            })
+            state.user.channels = state.user.channels.filter((e) => {
+                return e.name != ch;
+            });
         }
-    }
+    },
 };
 
 export default mutation;

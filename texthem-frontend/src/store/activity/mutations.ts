@@ -33,8 +33,6 @@ const mutation: MutationTree<ActivityInterface> = {
     },
 
     ACC_INV(state, payload) {
-        console.log('mutation acc inv:');
-        console.log(payload);
         let clone = [];
 
         for (let i = 0; i < state.invitations.length; i++) {
@@ -46,8 +44,6 @@ const mutation: MutationTree<ActivityInterface> = {
         // state.user?.channels.push(new_ch)
     },
     DEC_INV(state, new_ch) {
-        console.log('mutation dec inv:');
-        console.log(new_ch);
         let clone = [];
 
         for (let i = 0; i < state.invitations.length; i++) {
