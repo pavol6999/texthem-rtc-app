@@ -44,6 +44,13 @@ const mutation: MutationTree<AuthStateInterface> = {
             });
         }
     },
+    LEFT_CHANNEL_NAME(state, ch) {
+        if (state.user != null) {
+            state.user.channels = state.user.channels.filter(e => {
+                return e.name != ch
+            })
+        }
+    }
 };
 
 export default mutation;

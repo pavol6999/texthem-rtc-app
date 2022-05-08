@@ -10,7 +10,7 @@
                 </q-item-section>
                 <q-item-section avatar>
                     <q-avatar v-bind:color="get_color(item.nickname)" text-color="accent" class="circle">{{
-                            item.nickname.split('')[0]
+                        initial(item.nickname)
                     }}
                     </q-avatar>
                 </q-item-section>
@@ -31,7 +31,8 @@
         <TransitionGroup name="list" tag="ul">
             <q-item v-for="item in offline_list" :key="item.nickname" class="q-mb-sm" clickable v-ripple>
                 <q-item-section avatar>
-                    <q-avatar :color="get_color(item.nickname)" text-color="grey">{{ item.nickname.split('')[0] }}
+                    <q-avatar :color="get_color(item.nickname)" text-color="grey">
+                    {{ initial(item.nickname) }}
                     </q-avatar>
                 </q-item-section>
 
@@ -121,6 +122,9 @@ export default defineComponent({
 
     },
     methods: {
+        initial(name: string): string {
+            return name.toUpperCase().split('')[0]
+        },
         get_color(name: string): string {
             let sum = 0
             name.split('').forEach(element => {

@@ -108,6 +108,19 @@ class ChannelSocketManager extends SocketManager {
                 store.commit('channels/TYPING', { channel, user, message });
             }
         );
+
+        this.socket.on('userWasKicked', (params: any) => {
+            console.log('userkicked received', params.username, channel)
+            let me = store.getters['auth/currUser'].nickname
+
+            if (me == params.username) {
+                store.commit('auth/LEFT_CHANNEL_NAME', channel)
+                store.dispatch('channels/leave', channel, { root: true });
+                store.commit('channels/CLEAR_CHANNEL', channel);
+            } else {
+                // remove kicked user for the channel
+            }
+        })
     }
 
     public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -140,6 +153,10 @@ class ChannelSocketManager extends SocketManager {
 
     public notifyLeave(user: User): Promise<void> {
         return this.emitAsync('notifyLeave', user);
+    }
+
+    public sendKick(username: string) {
+        return this.emitAsync('userKicked', username)
     }
 }
 

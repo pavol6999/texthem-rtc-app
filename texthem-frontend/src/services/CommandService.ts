@@ -23,6 +23,8 @@ class CommandManager {
                 console.log(res.data.new_channel);
                 store.commit('auth/NEW_CHANNEL', res.data.new_channel);
                 store.dispatch('channels/join', channel_name);
+                store.dispatch('activity/join_ch', channel_name)
+
             }
         }
     }
@@ -123,6 +125,13 @@ class CommandManager {
                 name: channel,
                 username: user,
             });
+
+            if (res.status == 200) {
+                store.dispatch('activity/removed_user', {
+                    channel: channel,
+                    username: user
+                })
+            }
         } else {
             console.log('no channel or invalid format');
         }
@@ -140,6 +149,13 @@ class CommandManager {
                 name: channel,
                 username: user,
             });
+
+            if (res.status == 200) {
+                store.dispatch('activity/removed_user', {
+                    channel: channel,
+                    username: user
+                })
+            }
         } else {
             console.log('no channel or invalid format');
         }

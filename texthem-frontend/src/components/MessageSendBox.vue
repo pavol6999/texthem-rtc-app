@@ -29,6 +29,7 @@ import { mapActions } from 'vuex'
 import UserProfile from './UserProfile.vue'
 import commandService from '../services/CommandService'
 import HelpList from './HelpList.vue'
+import { Notify } from 'quasar'
 
 export default defineComponent({
     name: "MessageSendBox",
@@ -79,7 +80,7 @@ export default defineComponent({
                     for (let i = 0; i < res.length; i++) {
                         msg += ('\t' + res[i])
                     }
-                    this.$store.commit('channels/NEW_MESSAGE',
+                    /*this.$store.commit('channels/NEW_MESSAGE',
                         {
                             channel: this.activeChannel,
                             message: {
@@ -90,6 +91,13 @@ export default defineComponent({
                                 created_at: ''
                             }
                         })
+                    */
+                   Notify.create({
+                       message: msg,
+                       closeBtn: 'X',
+                       color: 'blue',
+                       timeout: 10000
+                   })
                 }
                 // await this.$store.dispatch('auth/check')
             } else {

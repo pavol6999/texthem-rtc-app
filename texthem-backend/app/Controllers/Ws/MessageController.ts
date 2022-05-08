@@ -48,4 +48,11 @@ export default class MessageController {
   ) {
     socket.broadcast.emit('someoneTyping', { channel, user, message })
   }
+
+  public async userKicked(
+    { socket }: WsContextContract,
+    username: string
+  ) {
+    socket.broadcast.emit('userWasKicked', {username: username })
+  }
 }

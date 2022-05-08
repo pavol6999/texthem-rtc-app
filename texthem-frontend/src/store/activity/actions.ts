@@ -4,7 +4,13 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ActivityInterface } from './state';
 import { activityService, channelService } from 'src/services';
+import { join } from 'path';
 const actions: ActionTree<ActivityInterface, StateInterface> = {
+
+    async removed_user({ state, commit }, {channel, username }) {
+        await channelService.in(channel)?.sendKick(username);
+    },
+
     async invite({ state, commit }, { channel, user }) {
         try {
             commit('INVITE_START');
@@ -32,6 +38,14 @@ const actions: ActionTree<ActivityInterface, StateInterface> = {
             commit('INVITE_ERROR', err);
             throw err;
         }
+    },
+
+    async join_ch({ state, commit, rootState, dispatch}, ch_name: string) {
+        await dispatch(
+            'channels/newUser',
+            { user: rootState.auth.user, channel_name: ch_name },
+            { root: true }
+        );
     },
 
     async inv_acc({ state, commit, rootState, dispatch }, ch_name: string) {

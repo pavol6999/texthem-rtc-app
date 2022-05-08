@@ -2,7 +2,7 @@
     <q-drawer v-model="leftSideDrawer" side="left" bordered>
         <div class="text-h4 row justify-center" style="margin-top:15px; margin-bottom:15px">Channels</div>
         <q-expansion-item v-if="invitation_list.length !== 0" label="Invitations" header-class="text-yellow"
-            icon="mail">
+            icon="mail" default-opened>
             <q-item v-for="item in invitation_list" :key="item.name" active-class="sel_item">
                 <q-item-section avatar>
                     <q-avatar color="primary">{{ initial(item.name) }}</q-avatar>
@@ -19,7 +19,7 @@
 
         <q-separator />
 
-        <q-expansion-item v-if="public_list.length !== 0" label="Public channels" icon="public" class="q-mb-sm">
+        <q-expansion-item v-if="public_list.length !== 0" label="Public channels" icon="public" class="q-mb-sm" default-opened>
             <q-scroll-area style="height: 30vh">
                 <q-item v-for="item in public_list" :active="activeChannel === item.name" :key="item.name" clickable
                     v-ripple @click="() => switch_channel(item.name)" active-class="sel_item">
@@ -36,7 +36,7 @@
 
         <q-separator />
 
-        <q-expansion-item v-if="private_list.length !== 0" label="Private channels" icon="unlocked" class="q-mb-sm">
+        <q-expansion-item v-if="private_list.length !== 0" label="Private channels" icon="unlocked" class="q-mb-sm" default-opened>
             <q-item v-for="item in private_list" :active="activeChannel === item.name" :key="item.name" clickable
                 v-ripple @click="() => switch_channel(item.name)" active-class="sel_item">
                 <q-item-section avatar>
