@@ -29,8 +29,9 @@ class ChannelSocketManager extends SocketManager {
 
             // todo check whether user should receive notifs
             let notifs_on = store.state.auth.user?.notifications;
+            let is_recipient = (message.content.includes('@' + store.state.auth.user?.nickname))                
 
-            if (notifs_on) {
+            if (notifs_on || is_recipient) {
                 let formatted_notif = this.format_notify(message, channel);
                 Notify.create({
                     timeout: 5000,

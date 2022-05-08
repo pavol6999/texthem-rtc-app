@@ -45,38 +45,25 @@
                 </div>
 
 
-                <div v-for="(msg, index) in typed_messages" :key="msg">
+                <div v-for="(msg, user) in typed_messages" :key="msg">
 
-
-
-                    <div class="msg_group_left" v-if="msg != ''">
-                        <q-avatar class="q-mr-md" :color="get_color(index)" text-color="white">{{
-                                initial(index)
+                    <div class="msg_group_left" v-if="msg != '' && user_is_present(user)">
+                        <q-avatar class="q-mr-md" :color="get_color(user)" text-color="white">{{
+                            initial(user)
                         }}
                         </q-avatar>
 
-                        <q-chat-message :name="index" text-color="white" :bg-color="get_color(index)">
-
-                            <q-spinner-dots size="2rem" />
-
+                        <q-chat-message :name="user" text-color="white" :bg-color="get_color(user)">
+                            <q-spinner-dots size="md" />
                         </q-chat-message>
+
                         <q-tooltip class="bg-amber text-black shadow-4" anchor="bottom left" self="bottom left"
                             :offset="[-150, -20]">
                             {{ msg }}
                         </q-tooltip>
 
-
-
-
-
-
-
                     </div>
                 </div>
-
-
-
-
 
             </div>
         </q-scroll-area>
@@ -182,8 +169,16 @@ export default defineComponent({
             return this.$store.getters['channels/activeChannel']
         },
         curr_messages(): SerializedMessage[] {
-
-            return this.$store.getters['channels/currentMessages']
+            let messages = this.$store.getters['channels/currentMessages']
+            let ret_messages: SerializedMessage[] = []
+            for (let i = 0; i < messages.length; i++) {
+                let now = new Date()
+                let sent_at = date.extractDate(messages[i].created_at, 'YYYY-MM-DDTHH:mm:ss')
+                let diff = date.getDateDiff(now, sent_at, 'seconds') / (60 * 60 * 24)
+                if (diff < 30)
+                    ret_messages.push(messages[i])
+            }
+            return ret_messages
         },
         curr_user(): User {
 
@@ -203,7 +198,10 @@ export default defineComponent({
         },
         typed_messages() {
             return this.typers[this.activeChannel] != undefined ? this.typers[this.activeChannel] : []
-        }
+        },
+        online_users(): User[] {
+            return this.$store.getters['activity/onlineUsers']
+        },
 
     },
     // watch: {
@@ -222,6 +220,15 @@ export default defineComponent({
     //     }
     // },
     methods: {
+        user_is_present(name: string) {
+            let tmp = this.$store.getters['channels/currentUsers'].filter((o1: User) => this.online_users.some(o2 => o1.id === o2.id))
+            let ret = false
+            tmp.forEach((e: User) => {
+                if (e.nickname == name)
+                    ret = true
+            })
+            return ret
+        },
         async scrollHandler(ctx: any) {
 
 

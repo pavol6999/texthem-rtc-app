@@ -9,12 +9,10 @@ const mutation: MutationTree<ChannelsStateInterface> = {
     },
 
     NEW_USER(state, { channel, user }) {
-        console.log('kkt');
         state.users[channel].push(user);
     },
 
     LEAVE_USER(state, { channel, user }) {
-        console.log('kkt left');
         const usr = state.users[channel].find((usr) => usr.id === user.id);
         const index = state.users[channel].indexOf(usr!, 0);
         if (index > -1) {
@@ -91,9 +89,10 @@ const mutation: MutationTree<ChannelsStateInterface> = {
         state.typing[channel][user] = message;
     },
 
-    TYPER_DISCONNECTED(state, user: string) {
+    TYPER_DISCONNECTED(state, user: User) {
+        console.log(user)
         Object.entries(state.typing).forEach((channel) => {
-            delete state.typing[channel[0]][user];
+            delete state.typing[channel[0]][user.nickname];
         });
     },
 };
